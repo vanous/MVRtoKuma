@@ -1,0 +1,71 @@
+#json_output_container {
+    height: 20;
+    overflow-y: scroll;
+}
+
+#json_output {
+    width: 100%;
+    height: auto;
+}
+
+#url_input {
+    width: 1fr;
+    height: 1;
+    margin-right: 1;
+    margin-left: 1;
+    padding: 0;
+    border: none;
+}
+
+#get_button {
+    height: 1;
+    margin-left: 1;
+    margin-right: 1;
+    padding: 0;
+    border: none;
+    background: blue;
+}
+
+#action_buttons {
+    width: 100%;
+    margin-top: 1;
+    height: auto;
+}
+
+#action_buttons Button {
+    height: 1;
+    margin-left: 1;
+    margin-right: 1;
+    padding: 0;
+    border: none;
+    background: blue;
+}
+
+#import_button {
+    margin-right: 1;
+}
+
+#frame {
+    border: round white;
+    margin-top: 1;
+}
+#checkbox_container {
+    margin-top: 1;
+    height: auto;
+}
+
+#behavior_options {
+    border: round white;
+    height: auto;
+    width: 100%;
+}
+
+#behavior_options Checkbox {
+    height: 1;
+    margin-left: 1;
+    margin-right: 1;
+    padding: 0;
+    border: none;
+    min-width: 8;
+    background: blue;
+}
