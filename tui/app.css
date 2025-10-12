@@ -1,9 +1,16 @@
-#json_output_container {
-    height: 20;
+ListDisplay {
+    height: 5;
     overflow-y: scroll;
+    width: 100%;
 }
 
+DictListDisplay {
+    height: 5;
+    overflow-y: scroll;
+    width: 100%;
+}
 #json_output {
+    border: round white;
     width: 100%;
     height: auto;
 }
@@ -17,32 +24,17 @@
     border: none;
 }
 
-#get_button {
-    height: 1;
-    margin-left: 1;
-    margin-right: 1;
-    padding: 0;
-    border: none;
-    background: blue;
-}
-
 #action_buttons {
-    width: 100%;
-    margin-top: 1;
     height: auto;
 }
 
-#action_buttons Button {
+Button {
     height: 1;
     margin-left: 1;
     margin-right: 1;
     padding: 0;
     border: none;
     background: blue;
-}
-
-#import_button {
-    margin-right: 1;
 }
 
 #frame {
@@ -57,7 +49,6 @@
 #behavior_options {
     border: round white;
     height: auto;
-    width: 100%;
 }
 
 #behavior_options Checkbox {
@@ -69,3 +60,9 @@
     min-width: 8;
     background: blue;
 }
+
+#left, #right {
+        border: round white;
+        width: 1fr;
+        height: 100%;
+    }

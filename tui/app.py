@@ -16,6 +16,22 @@ from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
 from textual_fspicker import FileOpen, Filters
 from tui.read_mvr import get_fixtures
+from textual.reactive import reactive
+
+
+class ListDisplay(Vertical):
+    def update_items(self, items: list):
+        self.remove_children()
+        for item in items:
+            self.mount(Static(f"{item.name} {item.uuid or ''} {item.id or ''}"))
+
+
+class DictListDisplay(Vertical):
+    def update_items(self, items: list):
+        self.remove_children()
+        for item in items:  # layers
+            for fixture in item["fixtures"]:
+                self.mount(Static(f"{fixture.name} {fixture.uuid}"))
 
 
 class MonitorsFetched(Message):
@@ -69,6 +85,8 @@ class UptimeKumaMVR(App):
 
     kuma_fixtures = []
     kuma_tags = []
+    mvr_fixtures = []
+    mvr_tags = []
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -76,20 +94,35 @@ class UptimeKumaMVR(App):
         yield Footer()
         with Vertical():
             with VerticalScroll(id="json_output_container"):
-                yield Static("JSON data will appear here.", id="json_output")
+                yield Static("No Errors...", id="json_output")
+                with Horizontal():
+                    with Vertical(id="left"):
+                        yield Static("[b]MVR data:[/b]")
+                        self.mvr_tag_display = ListDisplay()
+                        yield self.mvr_tag_display
+                        self.mvr_fixtures_display = DictListDisplay()
+                        yield self.mvr_fixtures_display
+                    with Vertical(id="right"):
+                        yield Static("[b]Uptime Kuma data:[/b]")
+                        self.kuma_tag_display = ListDisplay()
+                        yield self.kuma_tag_display
+                        self.kuma_fixtures_display = ListDisplay()
+                        yield self.kuma_fixtures_display
+
             with Horizontal(id="action_buttons"):
-                yield Button("Get Server Status", id="get_button")
+                yield Button("Get Server Data", id="get_button")
                 yield Button("Import MVR", id="import_button")
                 yield Button("Add Tags", id="create_tags")
                 yield Button("Add Monitors", id="create_monitors")
                 yield Button("Delete Monitors", id="delete_monitors")
+                yield Button("Delete Tags", id="delete_tags")
                 yield Button("Configure", id="configure_button")
                 yield Button("Quit", variant="error", id="quit")
             with Vertical(id="checkbox_container"):
                 yield Static("Use for Tags:")
                 with Horizontal(id="behavior_options"):
                     yield Checkbox("Layers ", id="layers_toggle")
-                    yield Checkbox("Groups ", id="groups_toggle")
+                    # yield Checkbox("Groups ", id="groups_toggle")
                     yield Checkbox("Classes ", id="classes_toggle")
 
     def on_mount(self) -> None:
@@ -103,7 +136,7 @@ class UptimeKumaMVR(App):
                     self.password = data.get("password", "")
                     self.timeout = data.get("timeout", "1")
                     self.query_one("#layers_toggle").value = data.get("layers", False)
-                    self.query_one("#groups_toggle").value = data.get("groups", False)
+                    # self.query_one("#groups_toggle").value = data.get("groups", False)
                     self.query_one("#classes_toggle").value = data.get("classes", False)
                 except json.JSONDecodeError:
                     # Handle empty or invalid JSON file
@@ -126,9 +159,14 @@ class UptimeKumaMVR(App):
                 "Calling API via script, adding monitors..."
             )
             self.run_api_delete_monitors()
+        if event.button.id == "delete_tags":
+            self.query_one("#json_output").update(
+                "Calling API via script, adding monitors..."
+            )
+            self.run_api_delete_tags()
         if event.button.id == "get_button":
             self.query_one("#json_output").update("Calling API via script...")
-            self.query_one("#get_button").disabled = True
+            # self.query_one("#get_button").disabled = True
             self.run_api_get_data()
             # worker_callable = functools.partial(self.run_api_script_worker, url)
             # self.run_worker(worker_callable, thread=True)
@@ -176,39 +214,43 @@ class UptimeKumaMVR(App):
                     self.post_message(Errors(error=str(e)))
 
     def on_monitors_fetched(self, message: MonitorsFetched) -> None:
-        output_widget = self.query_one("#json_output", Static)
-        self.query_one("#get_button", Button).disabled = False
+        # output_widget = self.query_one("#json_output", Static)
+        # self.query_one("#get_button", Button).disabled = False
 
-        formatted = json.dumps(message.monitors, indent=2)
+        # formatted = json.dumps(message.monitors, indent=2)
         # output_widget.update(f"[green]Monitors Fetched:[/green]\n{formatted}")
         self.kuma_fixtures = [KumaFixture(f) for f in message.monitors]
-        for fixture in self.kuma_fixtures:
-            print(fixture)
+        # for fixture in self.kuma_fixtures:
+        #    print(fixture)
+
+        self.kuma_fixtures_display.update_items(self.kuma_fixtures)
 
     def on_tags_fetched(self, message: MonitorsFetched) -> None:
-        output_widget = self.query_one("#json_output", Static)
-        self.query_one("#get_button", Button).disabled = False
+        # output_widget = self.query_one("#json_output", Static)
+        # self.query_one("#get_button", Button).disabled = False
 
-        formatted = json.dumps(message.tags, indent=2)
-        output_widget.update(f"[green]Tags Fetched:[/green]\n{formatted}")
+        # formatted = json.dumps(message.tags, indent=2)
+        # output_widget.update(f"[green]Tags Fetched:[/green]\n{formatted}")
         self.kuma_tags = [KumaTag(t) for t in message.tags]
-        for tag in self.kuma_tags:
-            print(tag)
+        # for tag in self.kuma_tags:
+        #    print(tag)
+
+        self.kuma_tag_display.update_items(self.kuma_tags)
 
     def on_mvr_parsed(self, message: MvrParsed) -> None:
-        output_widget = self.query_one("#json_output", Static)
-        self.query_one("#get_button", Button).disabled = False
+        # output_widget = self.query_one("#json_output", Static)
+        # self.query_one("#get_button", Button).disabled = False
 
         self.mvr_fixtures = message.fixtures
-        self.mvr_tags = message.tags["layers"] + message.tags["classes"]
-        for fixture in self.mvr_fixtures:
-            print(fixture)
-        for tag in self.mvr_tags:
-            print(tag)
+        self.mvr_tags += message.tags["layers"]
+        self.mvr_tags += message.tags["classes"]
+
+        self.mvr_tag_display.update_items(self.mvr_tags)
+        self.mvr_fixtures_display.update_items(self.mvr_fixtures)
 
     def on_errors(self, message: Errors) -> None:
         output_widget = self.query_one("#json_output", Static)
-        self.query_one("#get_button", Button).disabled = False
+        # self.query_one("#get_button", Button).disabled = False
 
         if message.error:
             output_widget.update(f"[red]Error:[/red] {message.error}")
@@ -240,6 +282,28 @@ class UptimeKumaMVR(App):
             # You can now emit a message or update reactive variables
             self.post_message(TagsFetched(tags=tags))
         except Exception as e:
+            self.post_message(Errors(error=str(e)))
+
+    @work(exclusive=True)
+    async def run_api_delete_tags(self) -> str:
+        # Safe to call blocking code here
+        api = None
+        try:
+            api = UptimeKumaApi(self.url, timeout=int(self.timeout))
+            api.login(self.username, self.password)
+        except Exception as e:
+            traceback.print_exception(e)
+            self.post_message(Errors(error=str(e)))
+
+        if not api:
+            self.post_message(Errors(error="Not logged in"))
+            return
+        try:
+            for tag in self.kuma_tags:
+                api.delete_tag(tag.id)
+
+        except Exception as e:
+            traceback.print_exception(e)
             self.post_message(Errors(error=str(e)))
 
     @work(exclusive=True)
@@ -281,26 +345,42 @@ class UptimeKumaMVR(App):
         try:
             for layer in self.mvr_fixtures:
                 print("debug layer", layer)
+
                 for mvr_fixture in layer.get("fixtures", []):
+                    monitor_id = None
+                    monitor_tags = []
                     add = True
                     for kuma_fixture in self.kuma_fixtures:
-                        print(f"{kuma_fixture.name=} {mvr_fixture=}")
-                        if mvr_fixture == kuma_fixture.name:
+                        # print(f"{kuma_fixture.name=} {mvr_fixture=}")
+                        if mvr_fixture.uuid == kuma_fixture.uuid:
                             add = False
+                            monitor_id = kuma_fixture.id
+                            monitor_tags = kuma_fixture.tags
+                            print("Monitor already exists", monitor_id, monitor_tags)
+                            break
                     if add:
+                        print("Add new monitor")
                         result = api.add_monitor(
                             type=MonitorType.HTTP,
                             name=mvr_fixture.name,
                             url="http://127.0.0.1:3001",
+                            description=mvr_fixture.uuid,
                         )
 
                         monitor_id = result.get("monitorID", None)
-                        if monitor_id is not None:
-                            for kuma_tag in self.kuma_tags:
-                                if kuma_tag.name == layer.get("layer_name", ""):
-                                    api.add_monitor_tag(
-                                        monitor_id=monitor_id, tag_id=kuma_tag.id
-                                    )
+                    if monitor_id is not None:
+                        for kuma_tag in self.kuma_tags:
+                            if self.query_one("#layers_toggle").value:
+                                # if self.query_one("#classes_toggle").value:
+                                if kuma_tag.name == layer["layer"].name:
+                                    if kuma_tag.name not in monitor_tags:
+                                        print(
+                                            f"{monitor_id=}, {kuma_tag.id=}, {monitor_tags=}"
+                                        )
+                                        api.add_monitor_tag(
+                                            monitor_id=monitor_id,
+                                            tag_id=kuma_tag.id,
+                                        )
 
         except Exception as e:
             traceback.print_exception(e)
@@ -324,11 +404,12 @@ class UptimeKumaMVR(App):
                 add = True
                 for kuma_tag in self.kuma_tags:
                     print(f"{kuma_tag.name=} {tag=}")
-                    if tag == kuma_tag.name:
+                    if tag.name == kuma_tag.name or tag.uuid == kuma_tag.uuid:
                         add = False
                 if add:
                     api.add_tag(
-                        name=tag, color="#{:06x}".format(random.randint(0, 0xFFFFFF))
+                        name=tag.name,
+                        color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
                     )
         except Exception as e:
             self.post_message(Errors(error=str(e)))
@@ -341,7 +422,7 @@ class UptimeKumaMVR(App):
             "password": self.password,
             "timeout": self.timeout,
             "layers": self.query_one("#layers_toggle").value,
-            "groups": self.query_one("#groups_toggle").value,
+            # "groups": self.query_one("#groups_toggle").value,
             "classes": self.query_one("#classes_toggle").value,
         }
         with open(self.CONFIG_FILE, "w") as f:
