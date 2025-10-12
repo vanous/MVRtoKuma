@@ -7,7 +7,7 @@ import subprocess
 from types import SimpleNamespace
 from textual.app import App, ComposeResult
 from textual import on, work
-from textual.containers import Horizontal, Vertical, VerticalScroll
+from textual.containers import Horizontal, Vertical, VerticalScroll, Grid
 from textual.widgets import Header, Footer, Input, Button, Checkbox, Static
 from textual.worker import Worker, WorkerState
 from tui.screens import QuitScreen, ConfigScreen
@@ -80,6 +80,13 @@ class UptimeKumaMVR(App):
         ("up", "focus_previous", "Focus Previous"),
         ("down", "focus_next", "Focus Next"),
     ]
+    HORIZONTAL_BREAKPOINTS = [
+        (0, "-narrow"),
+        (40, "-normal"),
+        (80, "-wide"),
+        (120, "-very-wide"),
+    ]
+
     CONFIG_FILE = "config.json"
     url: str = ""
     username: str = ""
@@ -112,7 +119,7 @@ class UptimeKumaMVR(App):
                         self.kuma_fixtures_display = ListDisplay()
                         yield self.kuma_fixtures_display
 
-            with Horizontal(id="action_buttons"):
+            with Grid(id="action_buttons"):
                 yield Button("Get Server Data", id="get_button")
                 yield Button("Import MVR", id="import_button")
                 yield Button("Add Tags", id="create_tags")

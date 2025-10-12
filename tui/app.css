@@ -25,12 +25,13 @@ DictListDisplay {
 }
 
 #action_buttons {
+    margin-left:1;
     height: auto;
 }
 
 Button {
     height: 1;
-    margin-left: 1;
+    margin-left: 0;
     margin-right: 1;
     padding: 0;
     border: none;
@@ -66,3 +67,13 @@ Button {
         width: 1fr;
         height: 100%;
     }
+
+Grid#action_buttons { 
+grid-size: 4 4; 
+height: auto;
+grid-gutter: 0;
+}
+Screen.-narrow Grid#action_buttons { grid-size: 1;}
+Screen.-normal Grid#action_buttons { grid-size: 2; }
+Screen.-wide Grid#action_buttons { grid-size: 4; }
+Screen.-very-wide Grid#action_buttons { grid-size: 8; }
