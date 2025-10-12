@@ -23,7 +23,10 @@ class ListDisplay(Vertical):
     def update_items(self, items: list):
         self.remove_children()
         for item in items:
-            self.mount(Static(f"{item.name} {item.uuid or ''} {item.id or ''}"))
+            tags = ""
+            if hasattr(item, "tags"):
+                tags = item.tags
+            self.mount(Static(f"{item.name} {item.uuid or ''} {item.id or ''} {tags}"))
 
 
 class DictListDisplay(Vertical):
@@ -149,21 +152,29 @@ class UptimeKumaMVR(App):
                 "Calling API via script, adding tags..."
             )
             self.run_api_create_tags()
+            self.run_api_get_data()
+
         if event.button.id == "create_monitors":
             self.query_one("#json_output").update(
                 "Calling API via script, adding monitors..."
             )
             self.run_api_create_monitors()
+            self.run_api_get_data()
+
         if event.button.id == "delete_monitors":
             self.query_one("#json_output").update(
                 "Calling API via script, adding monitors..."
             )
             self.run_api_delete_monitors()
+            self.run_api_get_data()
+
         if event.button.id == "delete_tags":
             self.query_one("#json_output").update(
                 "Calling API via script, adding monitors..."
             )
             self.run_api_delete_tags()
+            self.run_api_get_data()
+
         if event.button.id == "get_button":
             self.query_one("#json_output").update("Calling API via script...")
             # self.query_one("#get_button").disabled = True
@@ -349,16 +360,17 @@ class UptimeKumaMVR(App):
                 for mvr_fixture in layer.get("fixtures", []):
                     monitor_id = None
                     monitor_tags = []
-                    add = True
+                    add_monitor = True
+                    add_tag = None
                     for kuma_fixture in self.kuma_fixtures:
                         # print(f"{kuma_fixture.name=} {mvr_fixture=}")
                         if mvr_fixture.uuid == kuma_fixture.uuid:
-                            add = False
+                            add_monitor = False
                             monitor_id = kuma_fixture.id
                             monitor_tags = kuma_fixture.tags
                             print("Monitor already exists", monitor_id, monitor_tags)
                             break
-                    if add:
+                    if add_monitor:
                         print("Add new monitor")
                         result = api.add_monitor(
                             type=MonitorType.HTTP,
@@ -369,18 +381,22 @@ class UptimeKumaMVR(App):
 
                         monitor_id = result.get("monitorID", None)
                     if monitor_id is not None:
-                        for kuma_tag in self.kuma_tags:
-                            if self.query_one("#layers_toggle").value:
-                                # if self.query_one("#classes_toggle").value:
+                        if self.query_one("#layers_toggle").value:
+                            for kuma_tag in self.kuma_tags:
                                 if kuma_tag.name == layer["layer"].name:
                                     if kuma_tag.name not in monitor_tags:
                                         print(
-                                            f"{monitor_id=}, {kuma_tag.id=}, {monitor_tags=}"
+                                            f"{monitor_id=}, {kuma_tag.id=}, {kuma_tag.name=}, {monitor_tags=}"
                                         )
-                                        api.add_monitor_tag(
-                                            monitor_id=monitor_id,
-                                            tag_id=kuma_tag.id,
-                                        )
+                                        add_tag = kuma_tag.id
+                            if add_tag:
+                                try:
+                                    api.add_monitor_tag(
+                                        monitor_id=monitor_id,
+                                        tag_id=kuma_tag.id,
+                                    )
+                                except Exception as e:
+                                    print(e)
 
         except Exception as e:
             traceback.print_exception(e)
