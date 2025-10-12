@@ -5,11 +5,6 @@
 > [!Warning]
 > Under Heavy Development 🚧
 
-> [!Note]
-> Issues via [git-bug](https://github.com/git-bug/git-bug)
-
-
-
 ## Dev
 
 ```
