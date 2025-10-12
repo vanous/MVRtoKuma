@@ -3,6 +3,7 @@ from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
 from textual.widgets import Button, Static, Input, Label
 
+
 class ConfirmScreen(ModalScreen[dict]):
     """Screen with a dialog to confirm something."""
 

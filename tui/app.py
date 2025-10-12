@@ -1,22 +1,17 @@
-import functools
 import json
 import os
 import random
 import traceback
-import subprocess
-from types import SimpleNamespace
 from textual.app import App, ComposeResult
 from textual import on, work
 from textual.containers import Horizontal, Vertical, VerticalScroll
-from textual.widgets import Header, Footer, Input, Button, Checkbox, Static
-from textual.worker import Worker, WorkerState
+from textual.widgets import Header, Footer, Button, Checkbox, Static
 from tui.screens import ConfirmScreen, ConfigScreen
-from uptime_kuma_api import UptimeKumaApi, MonitorType, UptimeKumaException
+from uptime_kuma_api import UptimeKumaApi, MonitorType
 from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
 from textual_fspicker import FileOpen, Filters
 from tui.read_mvr import get_fixtures
-from textual.reactive import reactive
 
 
 class ListDisplay(Vertical):
@@ -167,6 +162,7 @@ class UptimeKumaMVR(App):
                 "yes": "Yes",
                 "no": "No",
             }
+
             def check_delete_tags(confirmed: bool) -> None:
                 """Called with the result of the dialog."""
                 if confirmed:
@@ -175,6 +171,7 @@ class UptimeKumaMVR(App):
                     )
                     self.run_api_delete_monitors()
                     self.run_api_get_data()
+
             self.push_screen(ConfirmScreen(data=delete_tags_dialog), check_delete_tags)
 
         if event.button.id == "delete_tags":
@@ -183,6 +180,7 @@ class UptimeKumaMVR(App):
                 "yes": "Yes",
                 "no": "No",
             }
+
             def check_delete_tags(confirmed: bool) -> None:
                 """Called with the result of the dialog."""
                 if confirmed:
@@ -191,6 +189,7 @@ class UptimeKumaMVR(App):
                     )
                     self.run_api_delete_tags()
                     self.run_api_get_data()
+
             self.push_screen(ConfirmScreen(data=delete_tags_dialog), check_delete_tags)
 
         if event.button.id == "get_button":
@@ -226,6 +225,7 @@ class UptimeKumaMVR(App):
                 "yes": "Yes",
                 "no": "No",
             }
+
             def check_quit(quit_confirmed: bool) -> None:
                 """Called with the result of the quit dialog."""
                 if quit_confirmed:
