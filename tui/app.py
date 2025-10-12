@@ -10,7 +10,7 @@ from textual import on, work
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.widgets import Header, Footer, Input, Button, Checkbox, Static
 from textual.worker import Worker, WorkerState
-from tui.screens import QuitScreen, ConfigScreen
+from tui.screens import ConfirmScreen, ConfigScreen
 from uptime_kuma_api import UptimeKumaApi, MonitorType, UptimeKumaException
 from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
@@ -73,7 +73,7 @@ class Errors(Message):
 class UptimeKumaMVR(App):
     """A Textual app to manage Uptime Kuma MVR."""
 
-    CSS_PATH = ["app.css", "quit_screen.css", "config_screen.css"]
+    CSS_PATH = ["app.css", "confirm_screen.css", "config_screen.css"]
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
         ("right", "focus_next", "Focus Next"),
@@ -162,18 +162,36 @@ class UptimeKumaMVR(App):
             self.run_api_get_data()
 
         if event.button.id == "delete_monitors":
-            self.query_one("#json_output").update(
-                "Calling API via script, adding monitors..."
-            )
-            self.run_api_delete_monitors()
-            self.run_api_get_data()
+            delete_tags_dialog = {
+                "question": "Are you sure you want to delete ALL monitors?",
+                "yes": "Yes",
+                "no": "No",
+            }
+            def check_delete_tags(confirmed: bool) -> None:
+                """Called with the result of the dialog."""
+                if confirmed:
+                    self.query_one("#json_output").update(
+                        "Calling API via script, deleting monitors..."
+                    )
+                    self.run_api_delete_monitors()
+                    self.run_api_get_data()
+            self.push_screen(ConfirmScreen(data=delete_tags_dialog), check_delete_tags)
 
         if event.button.id == "delete_tags":
-            self.query_one("#json_output").update(
-                "Calling API via script, adding monitors..."
-            )
-            self.run_api_delete_tags()
-            self.run_api_get_data()
+            delete_tags_dialog = {
+                "question": "Are you sure you want to delete ALL tags?",
+                "yes": "Yes",
+                "no": "No",
+            }
+            def check_delete_tags(confirmed: bool) -> None:
+                """Called with the result of the dialog."""
+                if confirmed:
+                    self.query_one("#json_output").update(
+                        "Calling API via script, deleting tags..."
+                    )
+                    self.run_api_delete_tags()
+                    self.run_api_get_data()
+            self.push_screen(ConfirmScreen(data=delete_tags_dialog), check_delete_tags)
 
         if event.button.id == "get_button":
             self.query_one("#json_output").update("Calling API via script...")
@@ -203,13 +221,17 @@ class UptimeKumaMVR(App):
             self.push_screen(ConfigScreen(data=current_config), save_config)
 
         if event.button.id == "quit":
-
+            quit_dialog = {
+                "question": "Are you sure you want to quit?",
+                "yes": "Yes",
+                "no": "No",
+            }
             def check_quit(quit_confirmed: bool) -> None:
                 """Called with the result of the quit dialog."""
                 if quit_confirmed:
                     self.action_quit()
 
-            self.push_screen(QuitScreen(), check_quit)
+            self.push_screen(ConfirmScreen(data=quit_dialog), check_quit)
 
     @on(Button.Pressed)
     @work

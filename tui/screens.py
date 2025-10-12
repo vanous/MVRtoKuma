@@ -3,9 +3,8 @@ from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
 from textual.widgets import Button, Static, Input, Label
 
-
-class QuitScreen(ModalScreen[bool]):
-    """Screen with a dialog to confirm quitting."""
+class ConfirmScreen(ModalScreen[dict]):
+    """Screen with a dialog to confirm something."""
 
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
@@ -14,9 +13,20 @@ class QuitScreen(ModalScreen[bool]):
         ("down", "focus_next", "Focus Next"),
     ]
 
+    def __init__(self, data: dict | None = None) -> None:
+        self.data = data or {}
+        super().__init__()
+
+    def on_mount(self) -> None:
+        """Load existing data into the fields."""
+        if self.data:
+            self.query_one("#question", Static).content = self.data.get("question", "")
+            self.query_one("#yes", Button).label = self.data.get("yes", "")
+            self.query_one("#no", Button).label = self.data.get("no", "")
+
     def compose(self) -> ComposeResult:
         yield Grid(
-            Static("Are you sure you want to quit?", id="question"),
+            Static("Question", id="question"),
             Horizontal(
                 Button("Yes", variant="error", id="yes"),
                 Button("No", variant="primary", id="no"),
