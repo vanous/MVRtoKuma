@@ -360,6 +360,14 @@ class UptimeKumaMVR(App):
                 print("debug layer", layer)
 
                 for mvr_fixture in layer.get("fixtures", []):
+                    url = None
+                    for network in mvr_fixture.addresses.network:
+                        if network.ipv4 is not None:
+                            url = network.ipv4
+                            break
+                    if url is None:
+                        continue
+
                     monitor_id = None
                     monitor_tags = []
                     add_monitor = True
@@ -377,7 +385,7 @@ class UptimeKumaMVR(App):
                         result = api.add_monitor(
                             type=MonitorType.HTTP,
                             name=mvr_fixture.name,
-                            url="http://127.0.0.1:3001",
+                            url=f"http://{url}",
                             description=mvr_fixture.uuid,
                         )
 
