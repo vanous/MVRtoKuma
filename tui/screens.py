@@ -31,6 +31,12 @@ class QuitScreen(ModalScreen[bool]):
         else:
             self.dismiss(False)
 
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()
+
 
 class ConfigScreen(ModalScreen[dict]):
     """Screen with a dialog to configure URL, username and password."""
@@ -84,3 +90,48 @@ class ConfigScreen(ModalScreen[dict]):
             )
         else:
             self.dismiss({})
+
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()
+
+
+class DeleteScreen(ModalScreen):
+    """Screen with a dialog to confirm quitting."""
+
+    BINDINGS = [
+        ("left", "focus_previous", "Focus Previous"),
+        ("right", "focus_next", "Focus Next"),
+        ("up", "focus_previous", "Focus Previous"),
+        ("down", "focus_next", "Focus Next"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Grid(id="dialog"):
+            yield Static("This will delete data from Uptime Kuma!", id="question")
+            with Horizontal():
+                yield Button("Cancel", id="cancel")
+                yield Button("Delete Monitors", id="delete_monitors")
+                yield Button("Delete Tags", id="delete_tags")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "delete_monitors":
+            self.app.run_api_delete_monitors()
+            self.app.run_api_get_data()
+            self.dismiss()
+
+        if event.button.id == "delete_tags":
+            self.app.run_api_delete_tags()
+            self.app.run_api_get_data()
+            self.dismiss()
+
+        if event.button.id == "cancel":
+            self.dismiss()
+
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()

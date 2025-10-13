@@ -3,13 +3,13 @@ ConfigScreen {
     align: center middle;
 }
 
-#config_dialog {
+ConfigScreen #config_dialog {
     grid-size: 1;
     grid-gutter: 1;
     padding: 0 1;
-    width: 100;
+    width: 54;
     height: 20;
-    border: thick $background 80%;
+    border: round white;
     background: $surface;
 }
 

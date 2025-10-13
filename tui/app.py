@@ -10,7 +10,7 @@ from textual import on, work
 from textual.containers import Horizontal, Vertical, VerticalScroll, Grid
 from textual.widgets import Header, Footer, Input, Button, Checkbox, Static
 from textual.worker import Worker, WorkerState
-from tui.screens import QuitScreen, ConfigScreen
+from tui.screens import QuitScreen, ConfigScreen, DeleteScreen
 from uptime_kuma_api import UptimeKumaApi, MonitorType, UptimeKumaException
 from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
@@ -73,7 +73,7 @@ class Errors(Message):
 class UptimeKumaMVR(App):
     """A Textual app to manage Uptime Kuma MVR."""
 
-    CSS_PATH = ["app.css", "quit_screen.css", "config_screen.css"]
+    CSS_PATH = ["app.css", "quit_screen.css", "config_screen.css", "delete_screen.css"]
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
         ("right", "focus_next", "Focus Next"),
@@ -124,8 +124,7 @@ class UptimeKumaMVR(App):
                 yield Button("Import MVR", id="import_button")
                 yield Button("Add Tags", id="create_tags")
                 yield Button("Add Monitors", id="create_monitors")
-                yield Button("Delete Monitors", id="delete_monitors")
-                yield Button("Delete Tags", id="delete_tags")
+                yield Button("Delete", id="delete_screen")
                 yield Button("Configure", id="configure_button")
                 yield Button("Quit", variant="error", id="quit")
             with Vertical(id="checkbox_container"):
@@ -168,12 +167,8 @@ class UptimeKumaMVR(App):
             self.run_api_create_monitors()
             self.run_api_get_data()
 
-        if event.button.id == "delete_monitors":
-            self.query_one("#json_output").update(
-                "Calling API via script, adding monitors..."
-            )
-            self.run_api_delete_monitors()
-            self.run_api_get_data()
+        if event.button.id == "delete_screen":
+            self.push_screen(DeleteScreen())
 
         if event.button.id == "delete_tags":
             self.query_one("#json_output").update(
