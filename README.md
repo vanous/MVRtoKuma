@@ -20,3 +20,11 @@ uv run textual run --dev main.py
 ```
 uv run main.py
 ```
+
+## Packaging
+
+Initial pyinstaller setup
+
+```
+uv run pyinstaller --onefile --add-data "tui/*.css:tui" main.py
+```
