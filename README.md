@@ -15,6 +15,10 @@ uv run textual console
 uv run textual run --dev main.py
 ```
 
+## Bugs
+
+Issues are handled via https://github.com/git-bug/git-bug , try to use this and report any issues :)
+
 ## Run
 
 ```
