@@ -8,7 +8,7 @@ DeleteScreen #dialog {
     grid-gutter: 1;
     padding: 0 1;
     width: 77;
-    height: 11;
+    height: 10;
     border: round white;
     background: red;
 }
@@ -34,6 +34,16 @@ DeleteScreen Button {
     height: 1;
     margin-left: 0;
     margin-right: 1;
+    padding: 0;
+    border: none;
+    background: blue;
+}
+#row1 Button,
+#row2 Button,
+#row3 Button {
+    width: 1fr; /* This makes each button take equal fraction of the container */
+    height: 1;
+    margin: 0 1;
     padding: 0;
     border: none;
     background: blue;

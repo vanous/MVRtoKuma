@@ -2,6 +2,7 @@ from textual.screen import ModalScreen
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal
 from textual.widgets import Button, Static, Input, Label
+from textual import events
 
 
 class QuitScreen(ModalScreen[bool]):
@@ -36,6 +37,10 @@ class QuitScreen(ModalScreen[bool]):
 
     def action_focus_previous(self) -> None:
         self.focus_previous()
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            self.dismiss()  # Close the modal
 
 
 class ConfigScreen(ModalScreen[dict]):
@@ -97,6 +102,10 @@ class ConfigScreen(ModalScreen[dict]):
     def action_focus_previous(self) -> None:
         self.focus_previous()
 
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            self.dismiss()  # Close the modal
+
 
 class DeleteScreen(ModalScreen):
     """Screen with a dialog to confirm quitting."""
@@ -111,22 +120,42 @@ class DeleteScreen(ModalScreen):
     def compose(self) -> ComposeResult:
         with Grid(id="dialog"):
             yield Static("This will delete data from Uptime Kuma!", id="question")
-            with Horizontal():
+
+            with Horizontal(id="row1"):
                 yield Button("Cancel", id="cancel")
-                yield Button("Delete Monitors", id="delete_monitors")
-                yield Button("Delete Tags", id="delete_tags")
+
+            with Horizontal(id="row2"):
+                yield Button("Delete All Monitors", id="delete_monitors")
+                yield Button("Delete All Tags", id="delete_tags")
+
+            with Horizontal(id="row3"):
+                yield Button("Delete Loaded MVR Monitors", id="delete_mvr_monitors")
+                yield Button("Delete Loaded MVR Tags", id="delete_mvr_tags")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "delete_monitors":
+            self.app.run_api_get_data()
             self.app.run_api_delete_monitors()
             self.app.run_api_get_data()
             self.dismiss()
 
         if event.button.id == "delete_tags":
+            self.app.run_api_get_data()
             self.app.run_api_delete_tags()
             self.app.run_api_get_data()
             self.dismiss()
 
+        if event.button.id == "delete_mvr_monitors":
+            self.app.run_api_get_data()
+            self.app.run_api_delete_monitors(mvr=True)
+            self.app.run_api_get_data()
+            self.dismiss()
+
+        if event.button.id == "delete_mvr_tags":
+            self.app.run_api_get_data()
+            self.app.run_api_delete_tags(mvr=True)
+            self.app.run_api_get_data()
+            self.dismiss()
         if event.button.id == "cancel":
             self.dismiss()
 
@@ -135,3 +164,7 @@ class DeleteScreen(ModalScreen):
 
     def action_focus_previous(self) -> None:
         self.focus_previous()
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            self.dismiss()  # Close the modal

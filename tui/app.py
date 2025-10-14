@@ -298,7 +298,7 @@ class UptimeKumaMVR(App):
             self.post_message(Errors(error=str(e)))
 
     @work(exclusive=True)
-    async def run_api_delete_tags(self) -> str:
+    async def run_api_delete_tags(self, mvr=False) -> str:
         # Safe to call blocking code here
         api = None
         try:
@@ -313,14 +313,23 @@ class UptimeKumaMVR(App):
             return
         try:
             for tag in self.kuma_tags:
-                api.delete_tag(tag.id)
+                delete = False
+                if mvr:
+                    for mvr_tag in self.mvr_tags:
+                        print("layers", tag.name, mvr_tag.name)
+                        if tag.name == mvr_tag.name:
+                            delete = True
+                else:
+                    delete = True
+                if delete:
+                    api.delete_tag(tag.id)
 
         except Exception as e:
             traceback.print_exception(e)
             self.post_message(Errors(error=str(e)))
 
     @work(exclusive=True)
-    async def run_api_delete_monitors(self) -> str:
+    async def run_api_delete_monitors(self, mvr=False) -> str:
         # Safe to call blocking code here
         api = None
         try:
@@ -335,7 +344,16 @@ class UptimeKumaMVR(App):
             return
         try:
             for monitor in self.kuma_fixtures:
-                api.delete_monitor(monitor.id)
+                delete = False
+                if mvr:
+                    for layer in self.mvr_fixtures:
+                        for fixture in layer["fixtures"]:
+                            if fixture.uuid == monitor.uuid:
+                                delete = True
+                else:
+                    delete = True
+                if delete:
+                    api.delete_monitor(monitor.id)
 
         except Exception as e:
             traceback.print_exception(e)
