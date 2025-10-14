@@ -17,7 +17,10 @@ uv run textual run --dev main.py
 
 ## Bugs
 
-Issues are handled via https://github.com/git-bug/git-bug , try to use this and report any issues :)
+- Issues are handled via https://github.com/git-bug/git-bug
+- For pushing/pulling of bugs, ssh based cloning must be used
+- I have no idea yet how to enable colaborators to pull/push bugs
+- Try to use this and report any issues :)
 
 ## Run
 
