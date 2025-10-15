@@ -42,6 +42,10 @@ DictListDisplay {
     border: round white;
     margin-top: 1;
 }
+
+#all_around {
+    border: round white;
+}
 #checkbox_container {
     margin-top: 1;
     height: auto;

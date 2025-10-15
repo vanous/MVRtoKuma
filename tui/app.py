@@ -124,7 +124,7 @@ class UptimeKumaMVR(App):
         """Create child widgets for the app."""
         yield Header()
         yield Footer()
-        with Vertical():
+        with Vertical(id="all_around"):
             with VerticalScroll(id="json_output_container"):
                 yield Static("No Errors...", id="json_output")
                 with Horizontal():
@@ -180,7 +180,6 @@ class UptimeKumaMVR(App):
 
             def set_config(data: dict) -> None:
                 print("setting data", data)
-                self.notify(str(data))
                 if data:
                     self.classes_toggle = data.get("classes", True)
                     self.layers_toggle = data.get("layers", True)
@@ -404,7 +403,6 @@ class UptimeKumaMVR(App):
         self.layers_toggle = data.get("layers", True)
         self.positions_toggle = data.get("positions", True)
 
-        self.notify(str(data))
         # Safe to call blocking code here
         api = None
         try:
