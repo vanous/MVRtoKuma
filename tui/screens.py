@@ -1,7 +1,7 @@
 from textual.screen import ModalScreen
 from textual.app import ComposeResult
-from textual.containers import Grid, Horizontal
-from textual.widgets import Button, Static, Input, Label
+from textual.containers import Grid, Horizontal, Vertical
+from textual.widgets import Button, Static, Input, Label, Checkbox
 from textual import events
 
 
@@ -168,3 +168,86 @@ class DeleteScreen(ModalScreen):
     async def on_key(self, event: events.Key) -> None:
         if event.key == "escape":
             self.dismiss()  # Close the modal
+
+
+class AddMonitorsScreen(ModalScreen[dict]):
+    """Screen with a dialog to confirm quitting."""
+
+    BINDINGS = [
+        ("left", "focus_previous", "Focus Previous"),
+        ("right", "focus_next", "Focus Next"),
+        ("up", "focus_previous", "Focus Previous"),
+        ("down", "focus_next", "Focus Next"),
+    ]
+
+    def __init__(self, data: dict | None = None) -> None:
+        self.data = data or {}
+        super().__init__()
+
+    def compose(self) -> ComposeResult:
+        yield Grid(
+            Static("Add Monitors", id="question"),
+            Horizontal(
+                Button("Add Monitors", id="create_monitors"),
+                Button("Cancel", id="cancel"),
+                id="row2",
+            ),
+            Vertical(
+                Static("Use for Tags:"),
+                Horizontal(
+                    Checkbox("Layers", id="layers_toggle"),
+                    Checkbox("Classes", id="classes_toggle"),
+                    Checkbox("Positions", id="positions_toggle"),
+                    id="behavior_options",
+                ),
+                id="checkbox_container",
+            ),
+            id="dialog",
+        )
+
+    def on_mount(self) -> None:
+        self.query_one("#layers_toggle").value = self.data.get("layers", False)
+        self.query_one("#classes_toggle").value = self.data.get("classes", False)
+        self.query_one("#positions_toggle").value = self.data.get("positions", False)
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "create_monitors":
+            self.app.query_one("#json_output").update(
+                "Calling API via script, adding monitors..."
+            )
+            data = {
+                "layers": self.query_one("#layers_toggle").value,
+                "classes": self.query_one("#classes_toggle").value,
+                "positions": self.query_one("#positions_toggle").value,
+            }
+            self.app.run_api_create_monitors(data)
+            self.app.run_api_get_data()
+            data = {
+                "layers": self.query_one("#layers_toggle").value,
+                "classes": self.query_one("#classes_toggle").value,
+                "positions": self.query_one("#positions_toggle").value,
+            }
+            self.dismiss(data)  # Close the modal
+
+        if event.button.id == "cancel":
+            data = {
+                "layers": self.query_one("#layers_toggle").value,
+                "classes": self.query_one("#classes_toggle").value,
+                "positions": self.query_one("#positions_toggle").value,
+            }
+            self.dismiss(data)  # Close the modal
+
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            data = {
+                "layers": self.query_one("#layers_toggle").value,
+                "classes": self.query_one("#classes_toggle").value,
+                "positions": self.query_one("#positions_toggle").value,
+            }
+            self.dismiss(data)  # Close the modal

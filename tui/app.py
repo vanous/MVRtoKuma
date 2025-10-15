@@ -8,9 +8,9 @@ from types import SimpleNamespace
 from textual.app import App, ComposeResult
 from textual import on, work
 from textual.containers import Horizontal, Vertical, VerticalScroll, Grid
-from textual.widgets import Header, Footer, Input, Button, Checkbox, Static
+from textual.widgets import Header, Footer, Input, Button, Static
 from textual.worker import Worker, WorkerState
-from tui.screens import QuitScreen, ConfigScreen, DeleteScreen
+from tui.screens import QuitScreen, ConfigScreen, DeleteScreen, AddMonitorsScreen
 from uptime_kuma_api import UptimeKumaApi, MonitorType, UptimeKumaException
 from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
@@ -33,7 +33,7 @@ class DictListDisplay(Vertical):
     def update_items(self, items: list):
         self.remove_children()
         for item in items:  # layers
-            for fixture in item["fixtures"]:
+            for fixture in item.fixtures:
                 self.mount(Static(f"{fixture.name} {fixture.uuid}"))
 
 
@@ -73,7 +73,13 @@ class Errors(Message):
 class UptimeKumaMVR(App):
     """A Textual app to manage Uptime Kuma MVR."""
 
-    CSS_PATH = ["app.css", "quit_screen.css", "config_screen.css", "delete_screen.css"]
+    CSS_PATH = [
+        "app.css",
+        "quit_screen.css",
+        "config_screen.css",
+        "delete_screen.css",
+        "add_monitors_screen.css",
+    ]
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
         ("right", "focus_next", "Focus Next"),
@@ -96,7 +102,23 @@ class UptimeKumaMVR(App):
     kuma_fixtures = []
     kuma_tags = []
     mvr_fixtures = []
-    mvr_tags = []
+    mvr_classes = []
+    mvr_positions = []
+    layers_toggle = True
+    classes_toggle = True
+    positions_toggle = True
+
+    def is_in_classes(self, name):
+        for cl in self.mvr_classes:
+            if cl.name == name:
+                return cl.uuid
+        return None
+
+    def is_in_positions(self, name):
+        for cl in self.mvr_positions:
+            if cl.name == name:
+                return cl.uuid
+        return None
 
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
@@ -123,16 +145,10 @@ class UptimeKumaMVR(App):
                 yield Button("Get Server Data", id="get_button")
                 yield Button("Import MVR", id="import_button")
                 yield Button("Add Tags", id="create_tags")
-                yield Button("Add Monitors", id="create_monitors")
+                yield Button("Add Monitors", id="open_create_monitors")
                 yield Button("Delete", id="delete_screen")
                 yield Button("Configure", id="configure_button")
                 yield Button("Quit", variant="error", id="quit")
-            with Vertical(id="checkbox_container"):
-                yield Static("Use for Tags:")
-                with Horizontal(id="behavior_options"):
-                    yield Checkbox("Layers ", id="layers_toggle")
-                    # yield Checkbox("Groups ", id="groups_toggle")
-                    yield Checkbox("Classes ", id="classes_toggle")
 
     def on_mount(self) -> None:
         """Load the configuration from the JSON file when the app starts."""
@@ -144,9 +160,9 @@ class UptimeKumaMVR(App):
                     self.username = data.get("username", "")
                     self.password = data.get("password", "")
                     self.timeout = data.get("timeout", "1")
-                    self.query_one("#layers_toggle").value = data.get("layers", False)
-                    # self.query_one("#groups_toggle").value = data.get("groups", False)
-                    self.query_one("#classes_toggle").value = data.get("classes", False)
+                    self.layers_toggle = data.get("layers", False)
+                    self.classes_toggle = data.get("classes", False)
+                    self.positions_toggle = data.get("positions", False)
                 except json.JSONDecodeError:
                     # Handle empty or invalid JSON file
                     pass
@@ -160,12 +176,26 @@ class UptimeKumaMVR(App):
             self.run_api_create_tags()
             self.run_api_get_data()
 
-        if event.button.id == "create_monitors":
-            self.query_one("#json_output").update(
-                "Calling API via script, adding monitors..."
+        if event.button.id == "open_create_monitors":
+
+            def set_config(data: dict) -> None:
+                print("setting data", data)
+                self.notify(str(data))
+                if data:
+                    self.classes_toggle = data.get("classes", True)
+                    self.layers_toggle = data.get("layers", True)
+                    self.positions_toggle = data.get("positions", True)
+
+            self.push_screen(
+                AddMonitorsScreen(
+                    data={
+                        "layers": self.layers_toggle,
+                        "classes": self.classes_toggle,
+                        "positions": self.positions_toggle,
+                    }
+                ),
+                set_config,
             )
-            self.run_api_create_monitors()
-            self.run_api_get_data()
 
         if event.button.id == "delete_screen":
             self.push_screen(DeleteScreen())
@@ -255,10 +285,13 @@ class UptimeKumaMVR(App):
         # self.query_one("#get_button", Button).disabled = False
 
         self.mvr_fixtures = message.fixtures
-        self.mvr_tags += message.tags["layers"]
-        self.mvr_tags += message.tags["classes"]
 
-        self.mvr_tag_display.update_items(self.mvr_tags)
+        self.mvr_classes += message.tags["classes"]
+        self.mvr_positions += message.tags["positions"]
+
+        self.mvr_tag_display.update_items(
+            message.tags["classes"] + message.tags["layers"] + message.tags["positions"]
+        )
         self.mvr_fixtures_display.update_items(self.mvr_fixtures)
 
     def on_errors(self, message: Errors) -> None:
@@ -315,8 +348,11 @@ class UptimeKumaMVR(App):
             for tag in self.kuma_tags:
                 delete = False
                 if mvr:
-                    for mvr_tag in self.mvr_tags:
-                        print("layers", tag.name, mvr_tag.name)
+                    for mvr_tag in (
+                        self.mvr_classes
+                        + self.mvr_positions
+                        + [layer.layer for layer in self.mvr_fixtures]
+                    ):  # class or layer
                         if tag.name == mvr_tag.name:
                             delete = True
                 else:
@@ -326,6 +362,7 @@ class UptimeKumaMVR(App):
 
         except Exception as e:
             traceback.print_exception(e)
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
     @work(exclusive=True)
@@ -337,6 +374,7 @@ class UptimeKumaMVR(App):
             api.login(self.username, self.password)
         except Exception as e:
             traceback.print_exception(e)
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
         if not api:
@@ -357,10 +395,16 @@ class UptimeKumaMVR(App):
 
         except Exception as e:
             traceback.print_exception(e)
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
     @work(exclusive=True)
-    async def run_api_create_monitors(self) -> str:
+    async def run_api_create_monitors(self, data) -> str:
+        self.classes_toggle = data.get("classes", True)
+        self.layers_toggle = data.get("layers", True)
+        self.positions_toggle = data.get("positions", True)
+
+        self.notify(str(data))
         # Safe to call blocking code here
         api = None
         try:
@@ -368,6 +412,7 @@ class UptimeKumaMVR(App):
             api.login(self.username, self.password)
         except Exception as e:
             traceback.print_exception(e)
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
         if not api:
@@ -377,7 +422,7 @@ class UptimeKumaMVR(App):
             for layer in self.mvr_fixtures:
                 print("debug layer", layer)
 
-                for mvr_fixture in layer.get("fixtures", []):
+                for mvr_fixture in layer.fixtures or []:
                     url = None
                     for network in mvr_fixture.addresses.network:
                         if network.ipv4 is not None:
@@ -409,25 +454,76 @@ class UptimeKumaMVR(App):
 
                         monitor_id = result.get("monitorID", None)
                     if monitor_id is not None:
-                        if self.query_one("#layers_toggle").value:
-                            for kuma_tag in self.kuma_tags:
-                                if kuma_tag.name == layer["layer"].name:
+                        for kuma_tag in self.kuma_tags:
+                            if self.layers_toggle:  # add layers tag
+                                if kuma_tag.name == layer.layer.name:
                                     if kuma_tag.name not in monitor_tags:
                                         print(
                                             f"{monitor_id=}, {kuma_tag.id=}, {kuma_tag.name=}, {monitor_tags=}"
                                         )
+                                        monitor_tags.append(kuma_tag.name)
                                         add_tag = kuma_tag.id
-                            if add_tag:
-                                try:
-                                    api.add_monitor_tag(
-                                        monitor_id=monitor_id,
-                                        tag_id=kuma_tag.id,
-                                    )
-                                except Exception as e:
-                                    print(e)
+
+                                if add_tag:
+                                    try:
+                                        print("add layer", kuma_tag.name)
+                                        api.add_monitor_tag(
+                                            monitor_id=monitor_id,
+                                            tag_id=kuma_tag.id,
+                                        )
+                                        add_tag = None
+                                    except Exception as e:
+                                        print(e)
+
+                        add_tag = None
+                        for kuma_tag in self.kuma_tags:
+                            if self.positions_toggle:
+                                uuid = self.is_in_positions(kuma_tag.name)
+                                if uuid == mvr_fixture.position:
+                                    if kuma_tag.name not in monitor_tags:
+                                        print(
+                                            f"{monitor_id=}, {kuma_tag.id=}, {kuma_tag.name=}, {monitor_tags=}"
+                                        )
+                                        monitor_tags.append(kuma_tag.name)
+                                        add_tag = kuma_tag.id
+
+                                if add_tag:
+                                    try:
+                                        print("add position", kuma_tag.name)
+                                        api.add_monitor_tag(
+                                            monitor_id=monitor_id,
+                                            tag_id=kuma_tag.id,
+                                        )
+                                        add_tag = None
+                                    except Exception as e:
+                                        print(e)
+
+                        add_tag = None
+                        for kuma_tag in self.kuma_tags:
+                            if self.classes_toggle:
+                                uuid = self.is_in_classes(kuma_tag.name)
+                                if uuid == mvr_fixture.classing:
+                                    if kuma_tag.name not in monitor_tags:
+                                        print(
+                                            f"{monitor_id=}, {kuma_tag.id=}, {kuma_tag.name=}, {monitor_tags=}"
+                                        )
+                                        monitor_tags.append(kuma_tag.name)
+                                        add_tag = kuma_tag.id
+
+                                if add_tag:
+                                    try:
+                                        print("add class", kuma_tag.name)
+                                        api.add_monitor_tag(
+                                            monitor_id=monitor_id,
+                                            tag_id=kuma_tag.id,
+                                        )
+                                        add_tag = None
+                                    except Exception as e:
+                                        print(e)
 
         except Exception as e:
             traceback.print_exception(e)
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
     @work(exclusive=True)
@@ -438,13 +534,18 @@ class UptimeKumaMVR(App):
             api = UptimeKumaApi(self.url, timeout=int(self.timeout))
             api.login(self.username, self.password)
         except Exception as e:
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
         if not api:
             self.post_message(Errors(error="Not logged in"))
             return
         try:
-            for tag in self.mvr_tags:
+            for tag in (
+                self.mvr_classes
+                + self.mvr_positions
+                + [layer.layer for layer in self.mvr_fixtures]
+            ):
                 add = True
                 for kuma_tag in self.kuma_tags:
                     print(f"{kuma_tag.name=} {tag=}")
@@ -456,6 +557,7 @@ class UptimeKumaMVR(App):
                         color="#{:06x}".format(random.randint(0, 0xFFFFFF)),
                     )
         except Exception as e:
+            print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
 
     def action_save_config(self) -> None:
@@ -465,9 +567,9 @@ class UptimeKumaMVR(App):
             "username": self.username,
             "password": self.password,
             "timeout": self.timeout,
-            "layers": self.query_one("#layers_toggle").value,
-            # "groups": self.query_one("#groups_toggle").value,
-            "classes": self.query_one("#classes_toggle").value,
+            "layers": self.layers_toggle,
+            "classes": self.classes_toggle,
+            "positions": self.positions_toggle,
         }
         with open(self.CONFIG_FILE, "w") as f:
             json.dump(data, f, indent=4)
