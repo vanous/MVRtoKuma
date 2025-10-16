@@ -1,0 +1,1 @@
+{"author":{"id":"421fd1c77cfebe90540a894b2e80d4214ae89a29188b5a7e9f765a3792c715e1"},"ops":[{"type":1,"timestamp":1760627295,"nonce":"kIuUyogbwoU9kMB2bZm7F/spqaA=","title":"Put Toast to other part of the screen","message":"The self.notify() creates a Textual Toast. It should be possible to define the\nplacement, but i have not figure out how to do that.","files":null}]}
