@@ -33,10 +33,13 @@ DictListDisplay {
     height: 1;
     margin-left: 0;
     margin-right: 1;
+    margin-top:0;
+    margin-bottom: 0;
     padding: 0;
     border: none;
     background: blue;
 }
+
 
 #frame {
     border: round white;

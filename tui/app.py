@@ -10,13 +10,18 @@ from textual import on, work
 from textual.containers import Horizontal, Vertical, VerticalScroll, Grid
 from textual.widgets import Header, Footer, Input, Button, Static
 from textual.worker import Worker, WorkerState
-from tui.screens import QuitScreen, ConfigScreen, DeleteScreen, AddMonitorsScreen
+from tui.screens import (
+    MVRScreen,
+    QuitScreen,
+    ConfigScreen,
+    DeleteScreen,
+    AddMonitorsScreen,
+)
 from uptime_kuma_api import UptimeKumaApi, MonitorType, UptimeKumaException
 from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
-from textual_fspicker import FileOpen, Filters
-from tui.read_mvr import get_fixtures
 from textual.reactive import reactive
+from tui.messages import MvrParsed, Errors
 
 
 class ListDisplay(Vertical):
@@ -59,28 +64,11 @@ class MonitorsFetched(Message):
         super().__init__()
 
 
-class MvrParsed(Message):
-    """Message sent when monitors are fetched from the API."""
-
-    def __init__(self, fixtures: list | None = None, tags: list | None = None) -> None:
-        self.fixtures = fixtures
-        self.tags = tags
-        super().__init__()
-
-
 class TagsFetched(Message):
     """Message sent when monitors are fetched from the API."""
 
     def __init__(self, tags: list | None = None, error: str | None = None) -> None:
         self.tags = tags
-        super().__init__()
-
-
-class Errors(Message):
-    """Message sent when monitors are fetched from the API."""
-
-    def __init__(self, error: str | None = None) -> None:
-        self.error = error
         super().__init__()
 
 
@@ -93,6 +81,8 @@ class UptimeKumaMVR(App):
         "config_screen.css",
         "delete_screen.css",
         "add_monitors_screen.css",
+        "mvr_screen.css",
+        "mvr_merge_screen.css",
     ]
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
@@ -161,8 +151,8 @@ class UptimeKumaMVR(App):
 
             with Grid(id="action_buttons"):
                 yield Button("Get Server Data", id="get_button")
-                yield Button("Import MVR", id="import_button")
                 yield Button("Add Monitors", id="open_create_monitors", disabled=True)
+                yield Button("MVR Files", id="mvr_screen")
                 yield Button("Delete", id="delete_screen", disabled=True)
                 yield Button("Configure", id="configure_button")
                 yield Button("Quit", variant="error", id="quit")
@@ -214,6 +204,9 @@ class UptimeKumaMVR(App):
                 ),
                 set_config,
             )
+
+        if event.button.id == "mvr_screen":
+            self.push_screen(MVRScreen())
 
         if event.button.id == "delete_screen":
             self.push_screen(DeleteScreen())
@@ -273,19 +266,6 @@ class UptimeKumaMVR(App):
                     self.action_quit()
 
             self.push_screen(QuitScreen(), check_quit)
-
-    @on(Button.Pressed)
-    @work
-    async def open_a_file(self, event: Button.Pressed) -> None:
-        if event.button.id == "import_button":
-            if opened := await self.push_screen_wait(
-                FileOpen(filters=Filters(("MVR", lambda p: p.suffix.lower() == ".mvr")))
-            ):
-                try:
-                    mvr_fixtures, mvr_tags = get_fixtures(opened)
-                    self.post_message(MvrParsed(fixtures=mvr_fixtures, tags=mvr_tags))
-                except Exception as e:
-                    self.post_message(Errors(error=str(e)))
 
     def on_monitors_fetched(self, message: MonitorsFetched) -> None:
         # output_widget = self.query_one("#json_output", Static)
