@@ -2,7 +2,11 @@ from textual.screen import ModalScreen
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal, Vertical
 from textual.widgets import Button, Static, Input, Label, Checkbox
-from textual import events
+from textual import on, work, events
+from textual_fspicker import FileOpen, Filters
+from tui.messages import MvrParsed, Errors
+from tui.read_mvr import get_fixtures
+from tui.merge_mvr import merger
 
 
 class QuitScreen(ModalScreen[bool]):
@@ -254,3 +258,158 @@ class AddMonitorsScreen(ModalScreen[dict]):
                 "positions": self.query_one("#positions_toggle").value,
             }
             self.dismiss(data)  # Close the modal
+
+
+class MVRScreen(ModalScreen):
+    """Screen with a dialog to confirm quitting."""
+
+    BINDINGS = [
+        ("left", "focus_previous", "Focus Previous"),
+        ("right", "focus_next", "Focus Next"),
+        ("up", "focus_previous", "Focus Previous"),
+        ("down", "focus_next", "Focus Next"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Grid(id="dialog"):
+            yield Static("MVR Selection", id="question")
+
+            with Horizontal(id="row1"):
+                yield Button("Cancel", id="cancel")
+
+            with Horizontal(id="row2"):
+                yield Button("Import MVR", id="import_mvr")
+                yield Button("Merge MVR files", id="merge_mvr")
+                yield Button("Clean MVR data", id="clean_mvr")
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "merge_mvr":
+            self.dismiss()
+            self.app.push_screen(MVRMergeScreen())
+
+        if event.button.id == "clean_mvr":
+            self.app.mvr_fixtures = []
+            self.app.mvr_classes = []
+            self.app.mvr_positions = []
+
+            self.app.mvr_tag_display.update_items(
+                self.app.mvr_positions
+                + self.app.mvr_classes
+                + [layer.layer for layer in self.app.mvr_fixtures]
+            )
+
+            self.app.mvr_fixtures_display.update_items(self.app.mvr_fixtures)
+            self.app.query_one("#json_output").update("MVR data cleaned")
+            self.app.query_one("#open_create_monitors").disabled = True
+            self.dismiss()
+
+        if event.button.id == "cancel":
+            self.dismiss()
+
+    @on(Button.Pressed)
+    @work
+    async def open_a_file(self, event: Button.Pressed) -> None:
+        if event.button.id == "import_mvr":
+            if opened := await self.app.push_screen_wait(
+                FileOpen(filters=Filters(("MVR", lambda p: p.suffix.lower() == ".mvr")))
+            ):
+                try:
+                    mvr_fixtures, mvr_tags = get_fixtures(opened)
+                    self.post_message(MvrParsed(fixtures=mvr_fixtures, tags=mvr_tags))
+                except Exception as e:
+                    self.post_message(Errors(error=str(e)))
+
+            self.dismiss()
+
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            self.dismiss()  # Close the modal
+
+
+class MVRMergeScreen(ModalScreen):
+    """Screen with a dialog to confirm quitting."""
+
+    file1 = None
+    file2 = None
+    BINDINGS = [
+        ("left", "focus_previous", "Focus Previous"),
+        ("right", "focus_next", "Focus Next"),
+        ("up", "focus_previous", "Focus Previous"),
+        ("down", "focus_next", "Focus Next"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Grid(id="dialog"):
+            yield Static("Select MVR files for merging", id="question")
+
+            with Horizontal(id="row1"):
+                yield Button("Cancel", id="cancel")
+
+            with Horizontal(id="row2"):
+                yield Button("Select MVR file 1", id="file_button1")
+                yield Button("Select MVR file 2 with IP addresses", id="file_button2")
+            with Horizontal(id="row3"):
+                yield Static("", id="file_name1")
+                yield Static("", id="file_name2")
+
+            with Horizontal(id="row4"):
+                yield Button("Merge", id="do_merge", disabled=True)
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "do_merge":
+            if self.file1 and self.file2 and self.file1 != self.file2:
+                try:
+                    merger(self.file2, self.file1)
+                    self.app.query_one("#json_output").update(
+                        "Done! merged_with_network.mvr saved"
+                    )
+                except Exception as e:
+                    self.post_message(Errors(error=str(e)))
+
+            self.dismiss()
+
+        if event.button.id == "cancel":
+            self.dismiss()
+
+    @on(Button.Pressed)
+    @work
+    async def open_a_file(self, event: Button.Pressed) -> None:
+        if event.button.id == "file_button1":
+            if opened := await self.app.push_screen_wait(
+                FileOpen(filters=Filters(("MVR", lambda p: p.suffix.lower() == ".mvr")))
+            ):
+                self.file1 = opened
+                self.check_files()
+
+        if event.button.id == "file_button2":
+            if opened := await self.app.push_screen_wait(
+                FileOpen(filters=Filters(("MVR", lambda p: p.suffix.lower() == ".mvr")))
+            ):
+                self.file2 = opened
+                self.check_files()
+
+    def check_files(self):
+        if self.file1:
+            self.query_one("#file_name1").update(f"{self.file1.name}")
+        if self.file2:
+            self.query_one("#file_name2").update(f"{self.file2.name}")
+        if self.file1 is not None and self.file2 and self.file1 != self.file2:
+            self.query_one("#do_merge").disabled = False
+        else:
+            self.query_one("#do_merge").disabled = True
+
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            self.dismiss()  # Close the modal

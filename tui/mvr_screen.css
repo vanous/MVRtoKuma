@@ -1,26 +1,24 @@
 
-DeleteScreen {
+MVRScreen {
     align: center middle;
 }
 
-DeleteScreen #dialog {
+MVRScreen #dialog {
     grid-size: 1;
     grid-gutter: 1;
     padding: 0 1;
-    width: 77;
+    width: 70;
     height: 10;
     border: round white;
-    background: red;
+    background: $surface;
 }
 
-#question {
+MVRScreen #question {
     height: 100%;
     content-align: center middle;
 }
 
-#row1 Button,
-#row2 Button,
-#row3 Button {
+#row2 Button {
     width: 1fr; /* This makes each button take equal fraction of the container */
     height: 1;
     margin: 0 1;
