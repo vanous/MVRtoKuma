@@ -1,11 +1,11 @@
 ListDisplay {
-    height: 5;
+    height: 50%;
     overflow-y: scroll;
     width: 100%;
 }
 
 DictListDisplay {
-    height: 5;
+    height: 50%;
     overflow-y: scroll;
     width: 100%;
 }

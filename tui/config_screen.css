@@ -4,21 +4,48 @@ ConfigScreen {
 }
 
 ConfigScreen #config_dialog {
-    grid-size: 1;
-    grid-gutter: 1;
-    padding: 0 1;
-    width: 54;
-    height: 20;
+    padding: 1;
+    width: 60;
+    height: auto;
     border: round white;
     background: $surface;
 }
 
+#config_question {
+    text-align: center;
+    padding-bottom: 2;
+}
+
+#config_dialog Horizontal {
+    height: auto;
+    margin-bottom: 1;
+}
+
 #config_dialog Label {
     text-align: right;
-    margin-right: 1;
+    margin-right: 2;
+    width: 25%;
 }
 
 #config_dialog Input {
+    height: 1;
+    border: none;
+    width: 75%;
+    background: $panel;
+}
+
+#details_checkbox_container {
+    align-vertical: middle;
+    height: 100%;
+    width: 75%;
+}
+
+#config_buttons {
+    align-horizontal: center;
+    padding-top: 1;
+}
+
+#config_buttons Button {
     height: 1;
     margin-left: 6;
     margin-right: 1;
@@ -26,14 +53,16 @@ ConfigScreen #config_dialog {
     border: none;
 }
 
-#config_buttons {
-    text-align: center;
-}
-
-#config_buttons Button {
+#details_checkbox_container {
     height: 1;
     margin-left: 6;
     margin-right: 1;
+    padding: 0;
+    border: none;
+}
+
+#details_checkbox_container Checkbox {
+    height: 1;
     padding: 0;
     border: none;
 }

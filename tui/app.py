@@ -25,8 +25,19 @@ class ListDisplay(Vertical):
         for item in items:
             tags = ""
             if hasattr(item, "tags"):
-                tags = item.tags
-            self.mount(Static(f"{item.name} {item.uuid or ''} {item.id or ''} {tags}"))
+                tags = ", ".join(item.tags)
+            if self.app.details_toggle:
+                self.mount(
+                    Static(
+                        f"[green]{item.name}[/green] {item.uuid or ''} {f' {item.id or ""}' if hasattr(item, 'id') else ''}{f' [blue]Tags:[/blue] {tags}' if tags else ''}"
+                    )
+                )
+            else:
+                self.mount(
+                    Static(
+                        f"[green]{item.name}[/green]{f' [blue]Tags:[/blue] {tags}' if tags else ''}"
+                    )
+                )
 
 
 class DictListDisplay(Vertical):
@@ -34,7 +45,10 @@ class DictListDisplay(Vertical):
         self.remove_children()
         for item in items:  # layers
             for fixture in item.fixtures:
-                self.mount(Static(f"{fixture.name} {fixture.uuid}"))
+                if self.app.details_toggle:
+                    self.mount(Static(f"[green]{fixture.name}[/green] {fixture.uuid}"))
+                else:
+                    self.mount(Static(f"[green]{fixture.name}[/green]"))
 
 
 class MonitorsFetched(Message):
@@ -97,7 +111,8 @@ class UptimeKumaMVR(App):
     url: str = ""
     username: str = ""
     password: str = ""
-    timeout: str = ""
+    timeout: str = "1"
+    details_toggle: bool = False
 
     kuma_fixtures = []
     kuma_tags = []
@@ -125,8 +140,8 @@ class UptimeKumaMVR(App):
         yield Header()
         yield Footer()
         with Vertical(id="all_around"):
-            with VerticalScroll(id="json_output_container"):
-                yield Static("No Errors...", id="json_output")
+            with Vertical(id="json_output_container"):
+                yield Static("Ready...", id="json_output")
                 with Horizontal():
                     with Vertical(id="left"):
                         yield Static("[b]MVR data:[/b]")
@@ -144,9 +159,8 @@ class UptimeKumaMVR(App):
             with Grid(id="action_buttons"):
                 yield Button("Get Server Data", id="get_button")
                 yield Button("Import MVR", id="import_button")
-                yield Button("Add Tags", id="create_tags")
-                yield Button("Add Monitors", id="open_create_monitors")
-                yield Button("Delete", id="delete_screen")
+                yield Button("Add Monitors", id="open_create_monitors", disabled=True)
+                yield Button("Delete", id="delete_screen", disabled=True)
                 yield Button("Configure", id="configure_button")
                 yield Button("Quit", variant="error", id="quit")
 
@@ -163,20 +177,17 @@ class UptimeKumaMVR(App):
                     self.layers_toggle = data.get("layers", False)
                     self.classes_toggle = data.get("classes", False)
                     self.positions_toggle = data.get("positions", False)
+                    self.details_toggle = data.get("details_toggle", False)
                 except json.JSONDecodeError:
                     # Handle empty or invalid JSON file
                     pass
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         """Called when a button is pressed."""
-        if event.button.id == "create_tags":
-            self.query_one("#json_output").update(
-                "Calling API via script, adding tags..."
-            )
-            self.run_api_create_tags()
-            self.run_api_get_data()
 
         if event.button.id == "open_create_monitors":
+            self.run_api_create_tags()
+            self.disable_buttons()
 
             def set_config(data: dict) -> None:
                 print("setting data", data)
@@ -204,14 +215,12 @@ class UptimeKumaMVR(App):
                 "Calling API via script, adding monitors..."
             )
             self.run_api_delete_tags()
-            self.run_api_get_data()
+            self.disable_buttons()
 
         if event.button.id == "get_button":
             self.query_one("#json_output").update("Calling API via script...")
-            # self.query_one("#get_button").disabled = True
             self.run_api_get_data()
-            # worker_callable = functools.partial(self.run_api_script_worker, url)
-            # self.run_worker(worker_callable, thread=True)
+            self.disable_buttons()
 
         if event.button.id == "configure_button":
             current_config = {
@@ -219,6 +228,7 @@ class UptimeKumaMVR(App):
                 "username": self.username,
                 "password": self.password,
                 "timeout": self.timeout,
+                "details_toggle": self.details_toggle,
             }
 
             def save_config(data: dict) -> None:
@@ -228,8 +238,19 @@ class UptimeKumaMVR(App):
                     self.username = data.get("username", "")
                     self.password = data.get("password", "")
                     self.timeout = data.get("timeout", "1")
+                    self.details_toggle = data.get("details_toggle", False)
                     self.action_save_config()
-                    self.notify("Configuration saved.")
+                    self.notify("Configuration saved.", timeout=1)
+
+                    self.mvr_tag_display.update_items(
+                        self.mvr_positions
+                        + self.mvr_classes
+                        + [layer.layer for layer in self.mvr_fixtures]
+                    )
+
+                    self.mvr_fixtures_display.update_items(self.mvr_fixtures)
+                    self.kuma_fixtures_display.update_items(self.kuma_fixtures)
+                    self.kuma_tag_display.update_items(self.kuma_tags)
 
             self.push_screen(ConfigScreen(data=current_config), save_config)
 
@@ -284,23 +305,26 @@ class UptimeKumaMVR(App):
         # self.query_one("#get_button", Button).disabled = False
 
         self.mvr_fixtures = message.fixtures
-
         self.mvr_classes += message.tags["classes"]
         self.mvr_positions += message.tags["positions"]
 
         self.mvr_tag_display.update_items(
-            message.tags["classes"] + message.tags["layers"] + message.tags["positions"]
+            self.mvr_positions
+            + self.mvr_classes
+            + [layer.layer for layer in self.mvr_fixtures]
         )
+
         self.mvr_fixtures_display.update_items(self.mvr_fixtures)
+        self.query_one("#json_output").update("MVR data imported")
+        self.enable_buttons()
 
     def on_errors(self, message: Errors) -> None:
         output_widget = self.query_one("#json_output", Static)
-        # self.query_one("#get_button", Button).disabled = False
 
         if message.error:
             output_widget.update(f"[red]Error:[/red] {message.error}")
 
-    @work(exclusive=True)
+    @work(thread=True)
     async def run_api_get_data(self) -> str:
         # Safe to call blocking code here
         api = None
@@ -328,8 +352,10 @@ class UptimeKumaMVR(App):
             self.post_message(TagsFetched(tags=tags))
         except Exception as e:
             self.post_message(Errors(error=str(e)))
+        finally:
+            api.disconnect()
 
-    @work(exclusive=True)
+    @work(thread=True)
     async def run_api_delete_tags(self, mvr=False) -> str:
         # Safe to call blocking code here
         api = None
@@ -363,8 +389,10 @@ class UptimeKumaMVR(App):
             traceback.print_exception(e)
             print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
+        finally:
+            api.disconnect()
 
-    @work(exclusive=True)
+    @work(thread=True)
     async def run_api_delete_monitors(self, mvr=False) -> str:
         # Safe to call blocking code here
         api = None
@@ -384,7 +412,7 @@ class UptimeKumaMVR(App):
                 delete = False
                 if mvr:
                     for layer in self.mvr_fixtures:
-                        for fixture in layer["fixtures"]:
+                        for fixture in layer.fixtures:
                             if fixture.uuid == monitor.uuid:
                                 delete = True
                 else:
@@ -396,8 +424,10 @@ class UptimeKumaMVR(App):
             traceback.print_exception(e)
             print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
+        finally:
+            api.disconnect()
 
-    @work(exclusive=True)
+    @work(thread=True)
     async def run_api_create_monitors(self, data) -> str:
         self.classes_toggle = data.get("classes", True)
         self.layers_toggle = data.get("layers", True)
@@ -523,8 +553,11 @@ class UptimeKumaMVR(App):
             traceback.print_exception(e)
             print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
+        finally:
+            if api:
+                api.disconnect()
 
-    @work(exclusive=True)
+    @work(thread=True)
     async def run_api_create_tags(self) -> str:
         # Safe to call blocking code here
         api = None
@@ -557,6 +590,9 @@ class UptimeKumaMVR(App):
         except Exception as e:
             print("error!!!!!", traceback.print_exception(e))
             self.post_message(Errors(error=str(e)))
+        finally:
+            if api:
+                api.disconnect()
 
     def action_save_config(self) -> None:
         """Save the configuration to the JSON file."""
@@ -568,6 +604,7 @@ class UptimeKumaMVR(App):
             "layers": self.layers_toggle,
             "classes": self.classes_toggle,
             "positions": self.positions_toggle,
+            "details_toggle": self.details_toggle,
         }
         with open(self.CONFIG_FILE, "w") as f:
             json.dump(data, f, indent=4)
@@ -576,6 +613,33 @@ class UptimeKumaMVR(App):
         """Save the configuration to the JSON file when the app closes."""
         self.action_save_config()
         self.exit()
+
+    def on_worker_state_changed(self, event: Worker.StateChanged) -> None:
+        """Called when the worker state changes."""
+        if event.worker.name in [
+            "run_api_delete_tags",
+            "run_api_create_tags",
+            "run_api_create_monitors",
+            "run_api_delete_monitors",
+        ]:
+            if event.worker.is_finished:
+                self.run_api_get_data()
+
+        if event.worker.name == "run_api_get_data":
+            if event.worker.is_finished:
+                self.query_one("#json_output").update("Server data refreshed")
+                self.enable_buttons()
+
+    def disable_buttons(self):
+        self.query_one("#get_button").disabled = True
+        self.query_one("#open_create_monitors").disabled = True
+        self.query_one("#delete_screen").disabled = True
+
+    def enable_buttons(self):
+        self.query_one("#get_button").disabled = False
+        if self.mvr_fixtures:
+            self.query_one("#open_create_monitors").disabled = False
+        self.query_one("#delete_screen").disabled = False
 
 
 if __name__ == "__main__":
