@@ -1,4 +1,4 @@
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/screenshot.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_01.png">
 
 # UptimeKuma MVR
 
@@ -55,3 +55,14 @@ Initial pyinstaller setup
 ```
 uv run pyinstaller --onefile --add-data "tui/*.css:tui" main.py
 ```
+
+### Screenshots
+
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_01.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_02.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_03.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_04.png">

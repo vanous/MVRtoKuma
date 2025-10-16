@@ -141,7 +141,10 @@ class UptimeKumaMVR(App):
         yield Footer()
         with Vertical(id="all_around"):
             with Vertical(id="json_output_container"):
-                yield Static("Ready...", id="json_output")
+                yield Static(
+                    "Ready... make sure to Configure Uptime Kuma address and credentials",
+                    id="json_output",
+                )
                 with Horizontal():
                     with Vertical(id="left"):
                         yield Static("[b]MVR data:[/b]")
@@ -178,6 +181,11 @@ class UptimeKumaMVR(App):
                     self.classes_toggle = data.get("classes", False)
                     self.positions_toggle = data.get("positions", False)
                     self.details_toggle = data.get("details_toggle", False)
+
+                    self.query_one("#json_output").update(
+                        f"{f'Configuration loaded, Server: [blue]{self.url}[/blue]' if self.url else 'Ready... make sure to Configure Uptime Kuma address and credentials'}"
+                    )
+
                 except json.JSONDecodeError:
                     # Handle empty or invalid JSON file
                     pass
@@ -241,6 +249,9 @@ class UptimeKumaMVR(App):
                     self.details_toggle = data.get("details_toggle", False)
                     self.action_save_config()
                     self.notify("Configuration saved.", timeout=1)
+                    self.query_one("#json_output").update(
+                        f"{f'Configuration loaded, Server: [blue]{self.url}[/blue]' if self.url else 'Ready... make sure to Configure Uptime Kuma address and credentials'}"
+                    )
 
                     self.mvr_tag_display.update_items(
                         self.mvr_positions
