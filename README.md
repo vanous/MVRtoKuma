@@ -1,11 +1,117 @@
+# Uptime Kuma MVR
+
+Tool to create monitors in [Uptime Kuma](https://uptime.kuma.pet/), from
+fixtures defined in [MVR](https://gdtf-share.com/) scene file.
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_01.png"><img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/kuma.png" height=400px>
+
+## Features
+
+- Uses  [pymvr](https://pypi.org/project/pymvr/) to read fixtures from MVR
+  files
+- Uses [Uptime Kuma](https://uptime.kuma.pet/)
+  [API](https://github.com/lucasheld/uptime-kuma-api)
+- Provides Graphical Terminal User Interface
+- Creates tags from scene Layers and from fixture Classes and Positions
+- Creates monitors, tagged with the above mentioned tags
+- Provides an MVR Merging tool, allowing to merge IP address from one MVR file
+  (created by some network scanning tool) with another scene file - typically
+  the main planning file. The fixture matching is based on fixture UUIDs or on
+  DMX Universe + Address
+- Bulk delete of monitors and tags - all, or only those matching from an MVR
+  import
+
+## FAQ
+
+### What is this
+
+A tool to quickly create monitors in Uptime Kuma, based on fixtures defined in MVR scene file.
+
+### What this is not
+
+A tool to create MVR files, or a general MVR merger.
+
+### What is MVR?
+
+The My Virtual Rig file format is an open standard which allows programs to
+share data and geometry of a scene for the entertainment industry. A scene is a
+set of parametric objects such as fixtures, trusses, video screens, and other
+objects that are used in the entertainment industry. This documentation
+describes DIN SPEC 15801:2023-12 also known as MVR Version 1.6. See
+documentation and further details on [GDTF Hub](https://gdtf.eu/).
+
+## Usage
+
+- Start the software, configure settings for Uptime Kuma server
+- Use the `Get Server Data` to get data from Uptime Kuma
+- Use `MVR Files - Import MVR`to import and MVR with fixtures. Make sure the
+  MVR contains data for IPv4 addresses
+- Use `Add Monitors` to create monitors in Uptime Kuma
+
+## Menu Description
+
+- ### Settings
+    - Set IP addres, username and password for access to Uptime Kuma server
+    - Choose to (not) display IDs of objects in MVR/Uptime Kuma
+- ### Import MVR
+    - Loads fixtures from MVR file
+    - Reads IPv4 addresses of these fixtures
+    - Reads layer, class and position names
+- ### Merge MVR
+    - Takes fixtures and IPv4 data from one MVR file
+    - Adds the IPv4 data into matching fixtures in another MVR file
+    - Fixture matching is based either on fixtures UUIDs or on DMX Universe
+      + Addresses
+- ### Clean MVR data
+    - Cleans the MVR imported data in the currently running program
+- ### Create Monitors
+    - Creates monitors in Uptime Kuma
+    - Allows to select which MVR features will be used for tags:
+        - Layers
+        - Classes
+        - Positions
+- ### Delete
+    - Allows to delete in the Uptime Kuma:
+        - All monitors
+        - All tags
+        - Monitors matching those from imported MVR
+        - Tags matching those from imported MVR
+
+## Requirements
+
+Install `uv` on your system. `uv` will manage python and dependencies
+installation and will also run the application.
+
+- [uv](https://docs.astral.sh/uv/)
+
+## Installation
+
+Clone the [repository](https://github.com/vanous/uptime-kuma-mvr/) or [download
+it](https://github.com/vanous/uptime-kuma-mvr/archive/refs/heads/master.zip) and uzip.
+
+## Run the application
+
+Inside the downloaded/unzipped repository, run:
+
+```bash
+uv run run.py
+```
+
+## Screenshots
+
 <img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_01.png">
 
-# UptimeKuma MVR
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_02.png">
 
-> [!Warning]
-> Under Heavy Development 🚧
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_03.png">
 
-## Dev
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_05.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_06.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_04.png">
+
+## Development
 
 ```
 uv run textual console
@@ -42,12 +148,6 @@ uv run textual run --dev main.py
 
 - No notification about new issues/comments
 
-## Run
-
-```
-uv run main.py
-```
-
 ## Packaging
 
 Initial pyinstaller setup
@@ -55,14 +155,3 @@ Initial pyinstaller setup
 ```
 uv run pyinstaller --onefile --add-data "tui/*.css:tui" main.py
 ```
-
-### Screenshots
-
-
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_01.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_02.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_03.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_04.png">
