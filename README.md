@@ -79,9 +79,9 @@ further details on [GDTF Hub](https://gdtf.eu/).
 
 ## Instalation
 
-Binary release is currently available for Linux, download it from the
+Binary release is currently available for Linux and Windows, download it from the
 [releases](https://github.com/vanous/uptime-kuma-mvr/releases). For other
-operating systems use the instructions below.
+operating systems and for development, use the instructions below.
 
 ## Requirements
 
@@ -102,6 +102,34 @@ Inside the downloaded/unzipped repository, run:
 ```bash
 uv run run.py
 ```
+
+## Running on Android in Termux
+
+With a small amount of effort, it is possible:
+
+- Install Termux
+- Install uv, python, wget:
+
+```sh
+pkg install uv python3 wget
+```
+
+- Download and unzip uptime-kuma-mvr:
+
+```sh
+wget https://github.com/vanous/uptime-kuma-mvr/archive/refs/heads/master.zip
+unzip master.zip
+cd uptime-kume-mvr-master
+```
+
+- You will need to edit the pyproject.toml and change python to 3.11, then you
+  can run it:
+
+```sh
+uv run run.py
+```
+
+<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/ui_mvr_android.jpg" height=400px>
 
 ## Screenshots
 
@@ -162,34 +190,6 @@ Initial pyinstaller setup
 ```
 uv run pyinstaller packaging.spec
 ```
-
-## Running on Android in Termux
-
-With a small amount of effort, it is possible:
-
-- Install Termux
-- Install uv, python, wget:
-
-```sh
-pkg install uv python3 wget
-```
-
-- Download and unzip uptime-kuma-mvr:
-
-```sh
-wget https://github.com/vanous/uptime-kuma-mvr/archive/refs/heads/master.zip
-unzip master.zip
-cd uptime-kume-mvr-master
-```
-
-- You will need to edit the pyproject.toml and change python to 3.11, then you
-  can run it:
-
-  ```sh
-  uv run run.py
-  ```
-
-<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/ui_mvr_android.jpg" height=400px>
 
 ## Running Uptime Kuma with Podman
 
