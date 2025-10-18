@@ -1,12 +1,14 @@
 from textual.screen import ModalScreen
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal, Vertical
-from textual.widgets import Button, Static, Input, Label, Checkbox
+from textual.widgets import Button, Static, Input, Label, Checkbox, Select
 from textual import on, work, events
 from textual_fspicker import FileOpen, Filters
-from tui.messages import MvrParsed, Errors
+from tui.messages import MvrParsed, Errors, DevicesDiscovered
 from tui.read_mvr import get_fixtures
 from tui.merge_mvr import merger
+from tui.network import get_network_cards
+from tui.artnet import ArtNetDiscovery
 
 
 class QuitScreen(ModalScreen[bool]):
@@ -413,6 +415,88 @@ class MVRMergeScreen(ModalScreen):
             self.query_one("#do_merge").disabled = False
         else:
             self.query_one("#do_merge").disabled = True
+
+    def action_focus_next(self) -> None:
+        self.focus_next()
+
+    def action_focus_previous(self) -> None:
+        self.focus_previous()
+
+    async def on_key(self, event: events.Key) -> None:
+        if event.key == "escape":
+            self.dismiss()  # Close the modal
+
+
+class ArtNetScreen(ModalScreen):
+    """Screen with a dialog to confirm quitting."""
+
+    networks = []
+    BINDINGS = [
+        ("left", "focus_previous", "Focus Previous"),
+        ("right", "focus_next", "Focus Next"),
+        ("up", "focus_previous", "Focus Previous"),
+        ("down", "focus_next", "Focus Next"),
+    ]
+
+    def compose(self) -> ComposeResult:
+        with Vertical(id="all_around"):
+            yield Static("Art-Net Discovery", id="question")
+            yield Button("Cancel", id="cancel")
+            yield Select([], id="networks_select")
+            yield Static("", id="network")
+            yield Button("Discover", id="do_start", disabled=True)
+            yield Static("", id="results")
+
+    def on_mount(self):
+        select_widget = self.query_one("#networks_select", Select)
+        self.networks = get_network_cards()
+        options = [(net[1], net[0]) for net in self.networks]
+        select_widget.set_options(options)
+        select_widget.value = "0.0.0.0"
+        select_widget.refresh()  # Force redraw
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "do_start":
+            self.run_discovery()
+            btn = self.query_one("#do_start")
+            btn.disabled = True
+            btn.label = "...discovering..."
+        if event.button.id == "cancel":
+            self.dismiss()
+
+    @on(Select.Changed)
+    def select_changed(self, event: Select.Changed) -> None:
+        if str(event.value) and str(event.value) != "Select.BLANK":
+            self.network = str(event.value)
+            self.query_one("#network").update(
+                f"{self.network} → {self.get_network_broadcast()}"
+            )
+            self.query_one("#do_start").disabled = False
+
+    def get_network_broadcast(self):
+        for net in self.networks:
+            if net[0] == self.network:
+                return net[2]
+
+    @work(thread=True)
+    async def run_discovery(self) -> str:
+        try:
+            discovery = ArtNetDiscovery(bind_ip=self.network)
+            discovery.start()
+            result = discovery.discover_devices()
+            self.post_message(DevicesDiscovered(devices=result))
+        except Exception as e:
+            self.post_message(DevicesDiscovered(devices=e))
+            self.post_message(Errors(error=str(e)))
+
+    def on_devices_discovered(self, message: DevicesDiscovered) -> None:
+        devices = message.devices
+        results_widget = self.query_one("#results", Static)
+        results_widget.update(str(devices))
+
+        btn = self.query_one("#do_start")
+        btn.disabled = False
+        btn.label = "Discover"
 
     def action_focus_next(self) -> None:
         self.focus_next()

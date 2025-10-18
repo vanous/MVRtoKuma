@@ -16,6 +16,7 @@ from tui.screens import (
     ConfigScreen,
     DeleteScreen,
     AddMonitorsScreen,
+    ArtNetScreen,
 )
 from uptime_kuma_api import UptimeKumaApi, MonitorType, UptimeKumaException
 from textual.message import Message
@@ -83,6 +84,7 @@ class UptimeKumaMVR(App):
         "add_monitors_screen.css",
         "mvr_screen.css",
         "mvr_merge_screen.css",
+        "artnet_screen.css",
     ]
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
@@ -159,6 +161,7 @@ class UptimeKumaMVR(App):
                     classes="small_button",
                 )
                 yield Button("MVR Files", id="mvr_screen", classes="small_button")
+                yield Button("Network", id="artnet_screen", classes="small_button")
                 yield Button(
                     "Delete", id="delete_screen", disabled=True, classes="small_button"
                 )
@@ -226,6 +229,9 @@ class UptimeKumaMVR(App):
 
         if event.button.id == "mvr_screen":
             self.push_screen(MVRScreen())
+
+        if event.button.id == "artnet_screen":
+            self.push_screen(ArtNetScreen())
 
         if event.button.id == "delete_screen":
             self.push_screen(DeleteScreen())

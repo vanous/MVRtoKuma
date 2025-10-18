@@ -5,6 +5,7 @@ description = "A tool to quickly create monitors in [Uptime Kuma](https://uptime
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "ifaddr>=0.2.0",
     "pymvr>=1.0.4",
     "textual>=6.2.1",
     "textual-fspicker>=0.6.0",
