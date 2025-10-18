@@ -31,7 +31,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='uk_mvr_linux',
+    name=f'{exe_name}',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
