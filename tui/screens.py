@@ -82,6 +82,10 @@ class ConfigScreen(ModalScreen[dict]):
                 yield Label("Show IDs in listing:")
                 with Horizontal(id="details_checkbox_container"):
                     yield Checkbox(id="details_toggle")
+            with Horizontal():
+                yield Label("UI Single Line:")
+                with Horizontal(id="details_checkbox_container"):
+                    yield Checkbox(id="singleline_ui_toggle")
             yield Horizontal(
                 Button("Save", variant="success", id="save"),
                 Button("Cancel", variant="error", id="cancel"),
@@ -98,6 +102,9 @@ class ConfigScreen(ModalScreen[dict]):
             self.query_one("#details_toggle", Checkbox).value = self.data.get(
                 "details_toggle", False
             )
+            self.query_one("#singleline_ui_toggle", Checkbox).value = self.data.get(
+                "singleline_ui_toggle", True
+            )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":
@@ -108,6 +115,9 @@ class ConfigScreen(ModalScreen[dict]):
                     "password": self.query_one("#password").value,
                     "timeout": self.query_one("#timeout").value,
                     "details_toggle": self.query_one("#details_toggle").value,
+                    "singleline_ui_toggle": self.query_one(
+                        "#singleline_ui_toggle"
+                    ).value,
                 }
             )
         else:

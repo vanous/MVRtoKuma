@@ -103,6 +103,7 @@ class UptimeKumaMVR(App):
     password: str = ""
     timeout: str = "1"
     details_toggle: bool = False
+    singleline_ui_toggle: bool = True
 
     kuma_fixtures = []
     kuma_tags = []
@@ -150,12 +151,19 @@ class UptimeKumaMVR(App):
                         yield self.kuma_fixtures_display
 
             with Grid(id="action_buttons"):
-                yield Button("Get Server Data", id="get_button")
-                yield Button("Add Monitors", id="open_create_monitors", disabled=True)
-                yield Button("MVR Files", id="mvr_screen")
-                yield Button("Delete", id="delete_screen", disabled=True)
-                yield Button("Configure", id="configure_button")
-                yield Button("Quit", variant="error", id="quit")
+                yield Button("Get Server Data", id="get_button", classes="small_button")
+                yield Button(
+                    "Add Monitors",
+                    id="open_create_monitors",
+                    disabled=True,
+                    classes="small_button",
+                )
+                yield Button("MVR Files", id="mvr_screen", classes="small_button")
+                yield Button(
+                    "Delete", id="delete_screen", disabled=True, classes="small_button"
+                )
+                yield Button("Configure", id="configure_button", classes="small_button")
+                yield Button("Quit", variant="error", id="quit", classes="small_button")
 
     def on_mount(self) -> None:
         """Load the configuration from the JSON file when the app starts."""
@@ -171,7 +179,18 @@ class UptimeKumaMVR(App):
                     self.classes_toggle = data.get("classes", False)
                     self.positions_toggle = data.get("positions", False)
                     self.details_toggle = data.get("details_toggle", False)
+                    self.singleline_ui_toggle = data.get("singleline_ui_toggle", True)
 
+                    if not data.get("singleline_ui_toggle", False):
+                        for button in self.query("Button"):
+                            button.remove_class("small_button")
+                            button.add_class("big_button")
+                            button.refresh(layout=True)  # Force refresh if needed
+                    else:
+                        for button in self.query("Button"):
+                            button.remove_class("big_button")
+                            button.add_class("small_button")
+                            button.refresh(layout=True)  # Force refresh if needed
                     self.query_one("#json_output").update(
                         f"{f'Configuration loaded, Server: [blue]{self.url}[/blue]' if self.url else 'Ready... make sure to Configure Uptime Kuma address and credentials'}"
                     )
@@ -230,6 +249,7 @@ class UptimeKumaMVR(App):
                 "password": self.password,
                 "timeout": self.timeout,
                 "details_toggle": self.details_toggle,
+                "singleline_ui_toggle": self.singleline_ui_toggle,
             }
 
             def save_config(data: dict) -> None:
@@ -240,6 +260,7 @@ class UptimeKumaMVR(App):
                     self.password = data.get("password", "")
                     self.timeout = data.get("timeout", "1")
                     self.details_toggle = data.get("details_toggle", False)
+                    self.singleline_ui_toggle = data.get("singleline_ui_toggle", True)
                     self.action_save_config()
                     self.notify("Configuration saved.", timeout=1)
                     self.query_one("#json_output").update(
@@ -255,6 +276,17 @@ class UptimeKumaMVR(App):
                     self.mvr_fixtures_display.update_items(self.mvr_fixtures)
                     self.kuma_fixtures_display.update_items(self.kuma_fixtures)
                     self.kuma_tag_display.update_items(self.kuma_tags)
+
+                    if not data.get("singleline_ui_toggle", False):
+                        for button in self.query("Button"):
+                            button.remove_class("small_button")
+                            button.add_class("big_button")
+                            button.refresh(layout=True)  # Force refresh if needed
+                    else:
+                        for button in self.query("Button"):
+                            button.remove_class("big_button")
+                            button.add_class("small_button")
+                            button.refresh(layout=True)  # Force refresh if needed
 
             self.push_screen(ConfigScreen(data=current_config), save_config)
 
@@ -596,6 +628,7 @@ class UptimeKumaMVR(App):
             "classes": self.classes_toggle,
             "positions": self.positions_toggle,
             "details_toggle": self.details_toggle,
+            "singleline_ui_toggle": self.singleline_ui_toggle,
         }
         with open(self.CONFIG_FILE, "w") as f:
             json.dump(data, f, indent=4)

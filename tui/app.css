@@ -29,7 +29,7 @@ DictListDisplay {
     height: auto;
 }
 
-#action_buttons Button {
+.small_button {
     height: 1;
     margin-left: 0;
     margin-right: 1;
@@ -40,6 +40,10 @@ DictListDisplay {
     background: blue;
 }
 
+.big_button {
+    height: 3;
+    background: blue;
+}
 
 #frame {
     border: round white;
