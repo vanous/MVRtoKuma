@@ -160,7 +160,7 @@ uv run textual run --dev run.py
 Initial pyinstaller setup
 
 ```
-uv run pyinstaller --onefile --add-data "tui/*.css:tui" run.py
+uv run pyinstaller packaging.spec
 ```
 
 ## Running on Android in Termux

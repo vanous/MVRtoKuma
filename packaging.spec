@@ -1,5 +1,14 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
+from PyInstaller.building.build_main import EXE
+# (other imports like Analysis, PYZ, etc.)
 
+if sys.platform.startswith('win'):
+    exe_name = 'uk_mvr_windows'
+elif sys.platform.startswith('linux'):
+    exe_name = 'uk_mvr_linux'
+else:
+    exe_name = 'uk_mvr'
 
 a = Analysis(
     ['run.py'],
@@ -22,7 +31,7 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='run',
+    name='uk_mvr_linux',
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
