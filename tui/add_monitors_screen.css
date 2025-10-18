@@ -13,7 +13,7 @@ AddMonitorsScreen #dialog {
     background: $surface;
 }
 
-#question {
+AddMonitorsScreen#question {
     content-align: center middle;
 }
 
@@ -26,9 +26,10 @@ AddMonitorsScreen Button {
     border: none;
     background: blue;
 }
-#row1 Button,
-#row2 Button,
-#row3 Button {
+
+AddMonitorsScreen #row1 Button,
+AddMonitorsScreen #row2 Button,
+AddMonitorsScreen #row3 Button {
     width: 1fr; /* This makes each button take equal fraction of the container */
     height: 1;
     margin: 0 1;
@@ -37,12 +38,12 @@ AddMonitorsScreen Button {
     background: blue;
 }
 
-#behavior_options {
+AddMonitorsScreen #behavior_options {
     border: round white;
     height: auto;
 }
 
-#behavior_options Checkbox {
+AddMonitorsScreen #behavior_options Checkbox {
     height: 1;
     margin-left: 1;
     margin-right: 1;

@@ -73,4 +73,4 @@ grid-gutter: 0;
 Screen.-narrow Grid#action_buttons { grid-size: 2;}
 Screen.-normal Grid#action_buttons { grid-size: 3; }
 Screen.-wide Grid#action_buttons { grid-size: 4; }
-Screen.-very-wide Grid#action_buttons { grid-size: 6; }
+Screen.-very-wide Grid#action_buttons { grid-size: 7; }

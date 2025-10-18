@@ -13,14 +13,14 @@ DeleteScreen #dialog {
     background: red;
 }
 
-#question {
+DeleteScreen #question {
     height: 100%;
     content-align: center middle;
 }
 
-#row1 Button,
-#row2 Button,
-#row3 Button {
+DeleteScreen #row1 Button,
+DeleteScreen #row2 Button,
+DeleteScreen #row3 Button {
     width: 1fr; /* This makes each button take equal fraction of the container */
     height: 1;
     margin: 0 1;
