@@ -49,10 +49,10 @@ further details on [GDTF Hub](https://gdtf.eu/).
   MVR contains data for IPv4 addresses
 - Use `Add Monitors` to create monitors in Uptime Kuma
 
-## Menu Description
+## Features
 
 - ### Settings
-    - Set IP addres, username and password for access to Uptime Kuma server
+    - Set IP address, username and password for access to Uptime Kuma server
     - Choose to (not) display IDs of objects in MVR/Uptime Kuma
 - ### Import MVR
     - Loads fixtures from MVR file
@@ -61,8 +61,7 @@ further details on [GDTF Hub](https://gdtf.eu/).
 - ### Merge MVR
     - Takes fixtures and IPv4 data from one MVR file
     - Adds the IPv4 data into matching fixtures in another MVR file
-    - Fixture matching is based either on fixtures UUIDs or on DMX Universe
-      + Addresses
+    - Fixture matching is based either on fixtures UUIDs or on DMX Universe + Addresses
 - ### Clean MVR data
     - Cleans the MVR imported data in the currently running program
 - ### Create Monitors
@@ -77,6 +76,12 @@ further details on [GDTF Hub](https://gdtf.eu/).
         - All tags
         - Monitors matching those from imported MVR
         - Tags matching those from imported MVR
+
+## Instalation
+
+Binary release is currently available for Linux, download it from the
+[releases](https://github.com/vanous/uptime-kuma-mvr/releases). For other
+operating systems use the instructions below.
 
 ## Requirements
 
@@ -137,12 +142,13 @@ uv run textual run --dev run.py
 	push-bugs = "! fn(){ remote=origin; echo \"fetching bugs from '$remote' remote...\" >&2; git push  \"$remote\" --prune refs/bugs/* refs/identities/*; }; fn"
 	pull-bugs = "! fn(){ remote=origin; echo \"fetching bugs from '$remote' remote...\" >&2; git fetch \"$remote\" \"refs/bugs/*:refs/bugs/*\" \"refs/identities/*:refs/identities/*\" && { [ ! -d .git/git-bug/cache/ ] || rm -r .git/git-bug/cache/; }; }; fn"
 ```
-- I have no idea yet how to enable colaborators to pull/push bugs, probably by adding write access to the repo...?
+- I have no idea yet how to enable collaborators to pull/push bugs, probably by adding write access to the repo...?
 - Try to use this and report any issues :)
+- Maybe a branch with bugs via PR?
 
 ### Upside
 
-- GitHub independent, prevents noob questions and requests
+- GitHub independent
 - Local TUI and WEBUI
 
 ### Downside
@@ -157,6 +163,19 @@ Initial pyinstaller setup
 uv run pyinstaller --onefile --add-data "tui/*.css:tui" run.py
 ```
 
+## Running Uptime Kuma with Podman
+
+```sh
+/usr/bin/podman run \
+ --replace \
+ --restart=always \
+ --detach \
+ --publish 3001:3001/tcp \
+ --volume /full path to the directory/data:/app/data:Z \
+ --name uptime-kuma \
+ docker.io/louislam/uptime-kuma:1
+```
+```bibtex
 @software{pymvr2025,
   title        = {pyMVR: Python Library for My Virtual Rig},
   author       = {{OpenStage}},
@@ -164,3 +183,4 @@ uv run pyinstaller --onefile --add-data "tui/*.css:tui" run.py
   version      = {1.0.3},
   url          = {https://github.com/open-stage/python-mvr}
 }
+```
