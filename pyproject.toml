@@ -1,7 +1,7 @@
 [project]
 name = "uptime-kume-mvr"
 version = "0.1.0"
-description = "Add your description here"
+description = "A tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/), from fixtures defined in a [MVR](https://gdtf-share.com/) (My Virtual Rig) scene file"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

@@ -1,9 +1,10 @@
 # Uptime Kuma MVR
 
-Tool to create monitors in [Uptime Kuma](https://uptime.kuma.pet/), from
-fixtures defined in [MVR](https://gdtf-share.com/) scene file.
+A tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/),
+from fixtures defined in a [MVR](https://gdtf-share.com/) (My Virtual Rig)
+scene file.
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_01.png"><img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/kuma.png" height=400px>
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_00.png">
 
 ## Features
 
@@ -11,9 +12,10 @@ fixtures defined in [MVR](https://gdtf-share.com/) scene file.
   files
 - Uses [Uptime Kuma](https://uptime.kuma.pet/)
   [API](https://github.com/lucasheld/uptime-kuma-api)
-- Provides Graphical Terminal User Interface
+- Provides Graphical [Terminal User Interface](https://textual.textualize.io/)
 - Creates tags from scene Layers and from fixture Classes and Positions
-- Creates monitors, tagged with the above mentioned tags
+- Creates monitors, marked with the above mentioned tags, allowing grouping in
+  Uptime Kuma
 - Provides an MVR Merging tool, allowing to merge IP address from one MVR file
   (created by some network scanning tool) with another scene file - typically
   the main planning file. The fixture matching is based on fixture UUIDs or on
@@ -29,18 +31,17 @@ A tool to quickly create monitors in Uptime Kuma, based on fixtures defined in M
 
 ### What this is not
 
-A tool to create MVR files, or a general MVR merger.
+This is not a tool to create MVR files. It also is not a general MVR file merger.
 
 ### What is MVR?
 
 The My Virtual Rig file format is an open standard which allows programs to
 share data and geometry of a scene for the entertainment industry. A scene is a
 set of parametric objects such as fixtures, trusses, video screens, and other
-objects that are used in the entertainment industry. This documentation
-describes DIN SPEC 15801:2023-12 also known as MVR Version 1.6. See
-documentation and further details on [GDTF Hub](https://gdtf.eu/).
+objects that are used in the entertainment industry. See documentation and
+further details on [GDTF Hub](https://gdtf.eu/).
 
-## Usage
+## Quick Start
 
 - Start the software, configure settings for Uptime Kuma server
 - Use the `Get Server Data` to get data from Uptime Kuma
@@ -118,7 +119,7 @@ uv run textual console
 ```
 
 ```
-uv run textual run --dev main.py
+uv run textual run --dev run.py
 ```
 
 ## Bugs
@@ -153,5 +154,13 @@ uv run textual run --dev main.py
 Initial pyinstaller setup
 
 ```
-uv run pyinstaller --onefile --add-data "tui/*.css:tui" main.py
+uv run pyinstaller --onefile --add-data "tui/*.css:tui" run.py
 ```
+
+@software{pymvr2025,
+  title        = {pyMVR: Python Library for My Virtual Rig},
+  author       = {{OpenStage}},
+  year         = {2025},
+  version      = {1.0.3},
+  url          = {https://github.com/open-stage/python-mvr}
+}
