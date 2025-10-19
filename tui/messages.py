@@ -21,6 +21,7 @@ class Errors(Message):
 class DevicesDiscovered(Message):
     """Message sent when monitors are fetched from the API."""
 
-    def __init__(self, devices: list | None = None) -> None:
+    def __init__(self, devices: list | None = None, error: str = "") -> None:
         self.devices = devices
+        self.error = error
         super().__init__()

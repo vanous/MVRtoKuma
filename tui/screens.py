@@ -302,6 +302,7 @@ class MVRScreen(ModalScreen):
             self.app.push_screen(ArtNetScreen())
 
         if event.button.id == "merge_mvr":
+            self.dismiss()
             self.app.push_screen(MVRMergeScreen())
 
         if event.button.id == "clean_mvr":
@@ -316,7 +317,7 @@ class MVRScreen(ModalScreen):
             )
 
             self.app.mvr_fixtures_display.update_items(self.app.mvr_fixtures)
-            self.app.query_one("#json_output").update("MVR data cleaned")
+            self.app.query_one("#json_output").update("[green]MVR data cleaned[/green]")
             self.app.query_one("#open_create_monitors").disabled = True
             self.dismiss()
 
@@ -380,7 +381,7 @@ class MVRMergeScreen(ModalScreen):
                 try:
                     merger(self.file2, self.file1)
                     self.app.query_one("#json_output").update(
-                        "Done! merged_with_network.mvr saved"
+                        "[green]Done! Saved as `merged_with_network.mvr`[/green]"
                     )
                 except Exception as e:
                     self.post_message(Errors(error=str(e)))
@@ -485,15 +486,17 @@ class ArtNetScreen(ModalScreen):
             discovery = ArtNetDiscovery(bind_ip=self.network)
             discovery.start()
             result = discovery.discover_devices()
+            discovery.stop()  # not really needed, as the thread will close...
             self.post_message(DevicesDiscovered(devices=result))
         except Exception as e:
-            self.post_message(DevicesDiscovered(devices=e))
-            self.post_message(Errors(error=str(e)))
+            self.post_message(DevicesDiscovered(error=str(e)))
 
     def extract_uni_dmx(self, long_name):
-        match = re.search(r"DMX:\s*(\d+)\s*Universe:\s*(\d+)", long_name)
         address = None
         universe = None
+        match = None
+        if long_name is not None:
+            match = re.search(r"DMX:\s*(\d+)\s*Universe:\s*(\d+)", long_name)
         if match:
             address = match.group(1)
             universe = match.group(2)
@@ -502,34 +505,33 @@ class ArtNetScreen(ModalScreen):
     def on_devices_discovered(self, message: DevicesDiscovered) -> None:
         devices = []
         results_widget = self.query_one("#results", Static)
-        for device in message.devices:
-            short_name = device.get("short_name", "No Name")
-            universe, address = self.extract_uni_dmx(device.get("long_name", ""))
-            ip_address = device.get("source_ip", None)
-            devices.append(
-                SimpleNamespace(
-                    ip_address=ip_address,
-                    short_name=short_name,
-                    universe=universe,
-                    address=address,
+        if message.devices:
+            for device in message.devices:
+                short_name = device.get("short_name", "No Name")
+                universe, address = self.extract_uni_dmx(device.get("long_name", ""))
+                ip_address = device.get("source_ip", None)
+                devices.append(
+                    SimpleNamespace(
+                        ip_address=ip_address,
+                        short_name=short_name,
+                        universe=universe,
+                        address=address,
+                    )
                 )
+            result = "\n".join(
+                f"{item.short_name} {item.ip_address} {item.universe} {item.address}"
+                for item in devices
             )
-        result = "\n".join(
-            f"{item.short_name} {item.ip_address} {item.universe} {item.address}"
-            for item in devices
-        )
 
         if devices:
             create_mvr(devices)
-            result = (
-                f"[green]MVR with {len(devices)} result(s) saved[/green]\n\n{result}"
-            )
+            result = f"[green]MVR with {len(devices)} result(s) saved as `discovered_devices.mvr`[/green]\n\n{result}"
 
             btn = self.query_one("#import_to_kuma")
             btn.disabled = False
 
         else:
-            result = "[red]No devices found[/red]"
+            result = f"[red]No devices found {message.error}[/red]"
 
         results_widget.update(result)
         btn = self.query_one("#do_start")

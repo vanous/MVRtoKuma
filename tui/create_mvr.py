@@ -17,6 +17,8 @@ def create_mvr(devices):
     layer.child_list = child_list
 
     for net_fixture in devices:
+        if net_fixture.ip_address is None:
+            continue
         fixture = pymvr.Fixture(name=net_fixture.short_name)
         fixture.addresses.network.append(pymvr.Network(ipv4=net_fixture.ip_address))
         if net_fixture.address is not None:

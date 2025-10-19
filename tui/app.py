@@ -337,7 +337,7 @@ class UptimeKumaMVR(App):
         # output_widget = self.query_one("#json_output", Static)
         # self.query_one("#get_button", Button).disabled = False
 
-        self.mvr_fixtures = message.fixtures
+        self.mvr_fixtures += message.fixtures
         self.mvr_classes += message.tags["classes"]
         self.mvr_positions += message.tags["positions"]
 
@@ -348,7 +348,7 @@ class UptimeKumaMVR(App):
         )
 
         self.mvr_fixtures_display.update_items(self.mvr_fixtures)
-        self.query_one("#json_output").update("MVR data imported")
+        self.query_one("#json_output").update("[green]MVR data imported[/green]")
         self.enable_buttons()
 
     def on_errors(self, message: Errors) -> None:
