@@ -23,6 +23,7 @@ from textual.message import Message
 from tui.fixture import KumaFixture, KumaTag
 from textual.reactive import reactive
 from tui.messages import MvrParsed, Errors
+from tui.read_mvr import get_fixtures
 
 
 class ListDisplay(Vertical):
@@ -304,6 +305,14 @@ class UptimeKumaMVR(App):
                     self.action_quit()
 
             self.push_screen(QuitScreen(), check_quit)
+
+    @work(thread=True)
+    async def run_import_mvr(self, filename) -> str:
+        try:
+            mvr_fixtures, mvr_tags = get_fixtures(filename)
+            self.post_message(MvrParsed(fixtures=mvr_fixtures, tags=mvr_tags))
+        except Exception as e:
+            self.post_message(Errors(error=str(e)))
 
     def on_monitors_fetched(self, message: MonitorsFetched) -> None:
         # output_widget = self.query_one("#json_output", Static)

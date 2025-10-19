@@ -5,7 +5,6 @@ from textual.widgets import Button, Static, Input, Label, Checkbox, Select
 from textual import on, work, events
 from textual_fspicker import FileOpen, Filters
 from tui.messages import MvrParsed, Errors, DevicesDiscovered
-from tui.read_mvr import get_fixtures
 from tui.merge_mvr import merger
 from tui.network import get_network_cards
 from tui.artnet import ArtNetDiscovery
@@ -325,11 +324,7 @@ class MVRScreen(ModalScreen):
             if opened := await self.app.push_screen_wait(
                 FileOpen(filters=Filters(("MVR", lambda p: p.suffix.lower() == ".mvr")))
             ):
-                try:
-                    mvr_fixtures, mvr_tags = get_fixtures(opened)
-                    self.post_message(MvrParsed(fixtures=mvr_fixtures, tags=mvr_tags))
-                except Exception as e:
-                    self.post_message(Errors(error=str(e)))
+                self.app.run_import_mvr(opened)
 
             self.dismiss()
 
