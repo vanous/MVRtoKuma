@@ -9,6 +9,7 @@ from tui.messages import Errors, DevicesDiscovered
 from tui.merge_mvr import merger
 from tui.network import get_network_cards
 from tui.artnet import ArtNetDiscovery
+from tui.create_mvr import create_mvr
 import re
 
 
@@ -151,9 +152,6 @@ class DeleteScreen(ModalScreen):
         with Grid(id="dialog"):
             yield Static("This will delete data from Uptime Kuma!", id="question")
 
-            with Horizontal(id="row1"):
-                yield Button("Cancel", id="cancel")
-
             with Horizontal(id="row2"):
                 yield Button("Delete All Monitors", id="delete_monitors")
                 yield Button("Delete All Tags", id="delete_tags")
@@ -161,6 +159,8 @@ class DeleteScreen(ModalScreen):
             with Horizontal(id="row3"):
                 yield Button("Delete Loaded MVR Monitors", id="delete_mvr_monitors")
                 yield Button("Delete Loaded MVR Tags", id="delete_mvr_tags")
+            with Horizontal(id="row1"):
+                yield Button("Cancel", id="cancel")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "delete_monitors":
@@ -287,17 +287,21 @@ class MVRScreen(ModalScreen):
         with Grid(id="dialog"):
             yield Static("MVR Selection", id="question")
 
-            with Horizontal(id="row1"):
-                yield Button("Cancel", id="cancel")
-
             with Horizontal(id="row2"):
                 yield Button("Import MVR", id="import_mvr")
                 yield Button("Merge MVR files", id="merge_mvr")
+            with Horizontal(id="row3"):
+                yield Button("Network Discovery", id="artnet_screen")
                 yield Button("Clean MVR data", id="clean_mvr")
+            with Horizontal(id="row1"):
+                yield Button("Cancel", id="cancel")
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "merge_mvr":
+        if event.button.id == "artnet_screen":
             self.dismiss()
+            self.app.push_screen(ArtNetScreen())
+
+        if event.button.id == "merge_mvr":
             self.app.push_screen(MVRMergeScreen())
 
         if event.button.id == "clean_mvr":
@@ -439,10 +443,12 @@ class ArtNetScreen(ModalScreen):
     def compose(self) -> ComposeResult:
         with Vertical(id="all_around"):
             yield Static("Art-Net Discovery", id="question")
-            yield Button("Cancel", id="cancel")
+            with Horizontal(id="row2"):
+                yield Button("Discover", id="do_start")
+                yield Button("Import Discovered", id="import_to_kuma", disabled=True)
+                yield Button("Cancel", id="cancel")
             yield Select([], id="networks_select")
             yield Static("", id="network")
-            yield Button("Discover", id="do_start", disabled=True)
             yield Static("", id="results")
 
     def on_mount(self):
@@ -458,6 +464,9 @@ class ArtNetScreen(ModalScreen):
             btn = self.query_one("#do_start")
             btn.disabled = True
             btn.label = "...discovering..."
+        if event.button.id == "import_to_kuma":
+            self.dismiss()
+            self.app.run_import_mvr("./discovered_devices.mvr")
         if event.button.id == "cancel":
             self.dismiss()
 
@@ -510,8 +519,19 @@ class ArtNetScreen(ModalScreen):
             for item in devices
         )
 
-        results_widget.update(result)
+        if devices:
+            create_mvr(devices)
+            result = (
+                f"[green]MVR with {len(devices)} result(s) saved[/green]\n\n{result}"
+            )
 
+            btn = self.query_one("#import_to_kuma")
+            btn.disabled = False
+
+        else:
+            result = "[red]No devices found[/red]"
+
+        results_widget.update(result)
         btn = self.query_one("#do_start")
         btn.disabled = False
         btn.label = "Discover"

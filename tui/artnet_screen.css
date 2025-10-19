@@ -1,6 +1,7 @@
 
 ArtNetScreen #question {
     content-align: center middle;
+    padding-bottom: 1;
 }
 
 ArtNetScreen #network {
@@ -13,11 +14,11 @@ ArtNetScreen #network {
 }
 ArtNetScreen Button {
     height: 1;
-    width: 100%;
+    width: 1fr;
     margin: 1;
-    padding: 0;
+    padding: 1;
     border: none;
-    background: blue;
+    background: red;
 }
 ArtNetScreen #results{
     height: 100%;
