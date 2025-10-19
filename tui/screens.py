@@ -1,13 +1,15 @@
+from types import SimpleNamespace
 from textual.screen import ModalScreen
 from textual.app import ComposeResult
 from textual.containers import Grid, Horizontal, Vertical
 from textual.widgets import Button, Static, Input, Label, Checkbox, Select
 from textual import on, work, events
 from textual_fspicker import FileOpen, Filters
-from tui.messages import MvrParsed, Errors, DevicesDiscovered
+from tui.messages import Errors, DevicesDiscovered
 from tui.merge_mvr import merger
 from tui.network import get_network_cards
 from tui.artnet import ArtNetDiscovery
+import re
 
 
 class QuitScreen(ModalScreen[bool]):
@@ -426,6 +428,7 @@ class ArtNetScreen(ModalScreen):
     """Screen with a dialog to confirm quitting."""
 
     networks = []
+    network = None
     BINDINGS = [
         ("left", "focus_previous", "Focus Previous"),
         ("right", "focus_next", "Focus Next"),
@@ -445,8 +448,7 @@ class ArtNetScreen(ModalScreen):
     def on_mount(self):
         select_widget = self.query_one("#networks_select", Select)
         self.networks = get_network_cards()
-        options = [(net[1], net[0]) for net in self.networks]
-        select_widget.set_options(options)
+        select_widget.set_options(self.networks)
         select_widget.value = "0.0.0.0"
         select_widget.refresh()  # Force redraw
 
@@ -463,19 +465,14 @@ class ArtNetScreen(ModalScreen):
     def select_changed(self, event: Select.Changed) -> None:
         if str(event.value) and str(event.value) != "Select.BLANK":
             self.network = str(event.value)
-            self.query_one("#network").update(
-                f"{self.network} → {self.get_network_broadcast()}"
-            )
+            self.query_one("#network").update(f"{self.network}")
             self.query_one("#do_start").disabled = False
-
-    def get_network_broadcast(self):
-        for net in self.networks:
-            if net[0] == self.network:
-                return net[2]
 
     @work(thread=True)
     async def run_discovery(self) -> str:
         try:
+            results_widget = self.query_one("#results", Static)
+            results_widget.update("Searching...")
             discovery = ArtNetDiscovery(bind_ip=self.network)
             discovery.start()
             result = discovery.discover_devices()
@@ -484,10 +481,36 @@ class ArtNetScreen(ModalScreen):
             self.post_message(DevicesDiscovered(devices=e))
             self.post_message(Errors(error=str(e)))
 
+    def extract_uni_dmx(self, long_name):
+        match = re.search(r"DMX:\s*(\d+)\s*Universe:\s*(\d+)", long_name)
+        address = None
+        universe = None
+        if match:
+            address = match.group(1)
+            universe = match.group(2)
+        return universe, address
+
     def on_devices_discovered(self, message: DevicesDiscovered) -> None:
-        devices = message.devices
+        devices = []
         results_widget = self.query_one("#results", Static)
-        results_widget.update(str(devices))
+        for device in message.devices:
+            short_name = device.get("short_name", "No Name")
+            universe, address = self.extract_uni_dmx(device.get("long_name", ""))
+            ip_address = device.get("source_ip", None)
+            devices.append(
+                SimpleNamespace(
+                    ip_address=ip_address,
+                    short_name=short_name,
+                    universe=universe,
+                    address=address,
+                )
+            )
+        result = "\n".join(
+            f"{item.short_name} {item.ip_address} {item.universe} {item.address}"
+            for item in devices
+        )
+
+        results_widget.update(result)
 
         btn = self.query_one("#do_start")
         btn.disabled = False

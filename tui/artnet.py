@@ -10,10 +10,8 @@ class ArtNetDiscovery:
     def __init__(
         self,
         bind_ip: str = None,
-        broadcast: str = None,
     ):
         self.bind_ip = bind_ip or "0.0.0.0"
-        self.broadcast = broadcast or "<broadcast>"
         self.socket = None
 
     def start(self):
@@ -60,8 +58,8 @@ class ArtNetDiscovery:
     def _create_artpoll_packet(self):
         packet = b"Art-Net\x00"  # ID
         packet += struct.pack("<H", 0x2000)  # OpCode (ArtPoll)
-        packet += struct.pack("<H", 0x0000)  # Protocol version
-        packet += b"\x00"  # TalkToMe
+        packet += struct.pack(">H", 14)  # Protocol version
+        packet += b"\x01"  # TalkToMe
         packet += b"\x00"  # Priority
         return packet
 
