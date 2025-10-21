@@ -71,18 +71,17 @@ class ArtNetDiscovery:
             and struct.unpack("<H", data[8:10])[0] == 0x2100
         )
 
-
     def decode_port_address(self, hi, lo):
-        net = hi & 0x7F
+        net = hi
         subnet = (lo >> 4) & 0x0F
         univ = lo & 0x0F
         return net, subnet, univ
 
-    def get_ports(self, portaddr_bytes) :
+    def get_ports(self, portaddr_bytes):
         ports = []
         for i in range(4):
-            hi = portaddr_bytes[2*i]
-            lo = portaddr_bytes[2*i + 1]
+            hi = portaddr_bytes[2 * i]
+            lo = portaddr_bytes[2 * i + 1]
             net, subnet, univ = self.decode_port_address(hi, lo)
             ports.append((net, subnet, univ))
 
@@ -90,7 +89,9 @@ class ArtNetDiscovery:
         for i, (net, subnet, univ) in enumerate(ports, start=1):
             # Show both structured and absolute if desired
             absolute = net * 256 + subnet * 16 + univ
-            print(f"  Port {i}: Net={net}, SubNet={subnet}, Universe={univ}  (absolute={absolute})")
+            print(
+                f"  Port {i}: Net={net}, SubNet={subnet}, Universe={univ}  (absolute={absolute})"
+            )
         return ports
 
     def _parse_artpoll_reply(self, data: bytes, addr: tuple):
