@@ -71,8 +71,9 @@ class ArtNetDiscovery:
             and struct.unpack("<H", data[8:10])[0] == 0x2100
         )
 
+
     def decode_port_address(self, hi, lo):
-        net = hi
+        net = hi & 0x7F              # mask off reserved bit
         subnet = (lo >> 4) & 0x0F
         univ = lo & 0x0F
         return net, subnet, univ
@@ -85,12 +86,11 @@ class ArtNetDiscovery:
             net, subnet, univ = self.decode_port_address(hi, lo)
             ports.append((net, subnet, univ))
 
-        # Print results
         for i, (net, subnet, univ) in enumerate(ports, start=1):
-            # Show both structured and absolute if desired
             absolute = net * 256 + subnet * 16 + univ
             print(
-                f"  Port {i}: Net={net}, SubNet={subnet}, Universe={univ}  (absolute={absolute})"
+                f"  Port {i}: Net={net}, SubNet={subnet}, Universe={univ} "
+                f"(absolute={absolute}) raw=({portaddr_bytes[2*(i-1)]:02X},{portaddr_bytes[2*(i-1)+1]:02X})"
             )
         return ports
 
@@ -101,7 +101,7 @@ class ArtNetDiscovery:
             reported_ip = f"{ip_bytes[0]}.{ip_bytes[1]}.{ip_bytes[2]}.{ip_bytes[3]}"
             short_name = data[26:43].decode("ascii", errors="ignore").strip("\x00")
             long_name = data[44:171].decode("ascii", errors="ignore").strip("\x00")
-            portaddr_bytes = data[174:182]
+            portaddr_bytes = data[173:181]
             print(data)
             ports = self.get_ports(portaddr_bytes)
             print("ports", ports)

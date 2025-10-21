@@ -1,0 +1,33 @@
+[07:15:56] PRINT                                                                                                                                 artnet.py:105
+b'Art-Net\x00\x00!\n\x0cX46\x19\x00\x01\x00\x00,\x96\x00\x00\xff\x7fBlenderDMX\x00\x00\x00\x00\x00\x00\x00\x00BlenderDMX GDTF & MVR plugin for 
+Blender\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00#0001 [0000] BlenderDMX. All your GDTFs are belong to 
+us.\x00\x00\x00\x00\x00\x00\x00\x00\x03\x80\x80\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x05\x05\x00\x01\x02\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x0
+0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+[07:15:56] PRINT                                                                                                                                  artnet.py:91
+  Port 1: Net=3, SubNet=8, Universe=0 (absolute=896) raw=(03,80)
+[07:15:56] PRINT                                                                                                                                  artnet.py:91
+  Port 2: Net=0, SubNet=8, Universe=0 (absolute=128) raw=(80,80)
+[07:15:56] PRINT                                                                                                                                  artnet.py:91
+  Port 3: Net=0, SubNet=0, Universe=0 (absolute=0) raw=(00,00)
+[07:15:56] PRINT                                                                                                                                  artnet.py:91
+  Port 4: Net=0, SubNet=0, Universe=0 (absolute=0) raw=(00,00)
+[07:15:56] PRINT                                                                                                                                 artnet.py:107
+ports [(3, 8, 0), (0, 8, 0), (0, 0, 0), (0, 0, 0)]
+
+
+
+[07:18:22] PRINT                                                                                                                                 artnet.py:105
+b'Art-Net\x00\x00!\n\x0cX46\x19\x00\x01\x00\x00,\x96\x00\x00\xff\x7fBlenderDMX\x00\x00\x00\x00\x00\x00\x00\x00BlenderDMX GDTF & MVR plugin for 
+Blender\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00#0001 [0000] BlenderDMX. All your GDTFs are belong to 
+us.\x00\x00\x00\x00\x00\x00\x00\x00\x01\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x05\x05\x05\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x06\x00\x00\x0
+0\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00'
+[07:18:22] PRINT                                                                                                                                  artnet.py:91
+  Port 1: Net=1, SubNet=8, Universe=0 (absolute=384) raw=(01,80)
+[07:18:22] PRINT                                                                                                                                  artnet.py:91
+  Port 2: Net=0, SubNet=0, Universe=0 (absolute=0) raw=(00,00)
+[07:18:22] PRINT                                                                                                                                  artnet.py:91
+  Port 3: Net=0, SubNet=0, Universe=0 (absolute=0) raw=(00,00)
+[07:18:22] PRINT                                                                                                                                  artnet.py:91
+  Port 4: Net=0, SubNet=0, Universe=0 (absolute=0) raw=(00,00)
+[07:18:22] PRINT                                                                                                                                 artnet.py:107
+ports [(1, 8, 0), (0, 0, 0), (0, 0, 0), (0, 0, 0)]
