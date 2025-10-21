@@ -26,3 +26,7 @@ ArtNetScreen #results{
     padding-left: 1;
     width: 100%;
 }
+
+ArtNetScreen #row2 {
+    margin-bottom:1;
+}
