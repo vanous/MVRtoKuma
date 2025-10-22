@@ -73,7 +73,7 @@ class TagsFetched(Message):
         super().__init__()
 
 
-class UptimeKumaMVR(App):
+class MVRtoKuma(App):
     """A Textual app to manage Uptime Kuma MVR."""
 
     CSS_PATH = [
@@ -677,5 +677,5 @@ class UptimeKumaMVR(App):
 
 
 if __name__ == "__main__":
-    app = UptimeKumaMVR()
+    app = MVRtoKuma()
     app.run()

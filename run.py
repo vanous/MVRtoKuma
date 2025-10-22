@@ -1,5 +1,5 @@
-from tui.app import UptimeKumaMVR
+from tui.app import MVRtoKuma
 
 if __name__ == "__main__":
-    app = UptimeKumaMVR()
+    app = MVRtoKuma()
     app.run()
