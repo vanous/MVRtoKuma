@@ -36,7 +36,8 @@ MVR scene file or based on network scan.
 
 ### What this is not
 
-This is not a tool to create MVR files. It also is not a general MVR file merger.
+This is not a general tool to create MVR files. It also is not a general MVR
+file merger.
 
 ## Instalation
 
