@@ -1,12 +1,12 @@
 # MVRtoKuma
 
-<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/MVRtoKuma_icon.png" width="256px">
+<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/MVRtoKuma_icon.png" width="128px">
 
 MVRtoKuma - a tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/),
 from fixtures defined in a [MVR](https://gdtf-share.com/) (My Virtual Rig)
 scene file or as discovered on the local network via ArtNet - ArtPoll.
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_00.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_title.png">
 
 ## Features
 
@@ -146,17 +146,19 @@ uv run run.py
 
 ## Screenshots
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_01.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_main.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_02.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_selection.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_03.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_discovery.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_05.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_merge.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_06.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_add_monitors.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_04.png">
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_delete.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_settings.png">
 
 ## Development
 
