@@ -1,12 +1,12 @@
 # MVRtoKuma
 
-<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/MVRtoKuma_icon.png" width="128px">
+<img src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/MVRtoKuma_icon.png" width="128px">
 
 MVRtoKuma - a tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/),
 from fixtures defined in a [MVR](https://gdtf-share.com/) (My Virtual Rig)
 scene file or as discovered on the local network via ArtNet - ArtPoll.
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_title.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_title.png">
 
 ## Features
 
@@ -41,7 +41,7 @@ This is not a tool to create MVR files. It also is not a general MVR file merger
 ## Instalation
 
 Binary releases for Linux, macOS and Windows are available from the
-[releases](https://github.com/vanous/uptime-kuma-mvr/releases). For other
+[releases](https://github.com/vanous/MVRtoKuma/releases). For other
 operating systems and for development, use the instructions below.
 
 ### What is MVR?
@@ -105,8 +105,8 @@ installation and will also run the application.
 
 ## Installation
 
-Clone the [repository](https://github.com/vanous/uptime-kuma-mvr/) or [download
-it](https://github.com/vanous/uptime-kuma-mvr/archive/refs/heads/master.zip) and uzip.
+Clone the [repository](https://github.com/vanous/MVRtoKuma/) or [download
+it](https://github.com/vanous/MVRtoKuma/archive/refs/heads/master.zip) and uzip.
 
 ## Run the application
 
@@ -127,10 +127,10 @@ With a small amount of effort, it is possible:
 pkg install uv python3 wget
 ```
 
-- Download and unzip uptime-kuma-mvr:
+- Download and unzip MVRtoKuma:
 
 ```sh
-wget https://github.com/vanous/uptime-kuma-mvr/archive/refs/heads/master.zip
+wget https://github.com/vanous/MVRtoKuma/archive/refs/heads/master.zip
 unzip master.zip
 cd uptime-kume-mvr-master
 ```
@@ -142,23 +142,23 @@ cd uptime-kume-mvr-master
 uv run run.py
 ```
 
-<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/ui_mvr_android.jpg" height=400px>
+<img src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/ui_mvr_android.jpg" height=400px>
 
 ## Screenshots
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_main.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_main.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_selection.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_selection.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_discovery.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_discovery.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_merge.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_merge.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_add_monitors.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_add_monitors.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_delete.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_delete.png">
 
-<img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_settings.png">
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_settings.png">
 
 ## Development
 
