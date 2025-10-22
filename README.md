@@ -15,17 +15,17 @@ scene file or as discovered on the local network via ArtNet - ArtPoll.
 - Uses [Uptime Kuma](https://uptime.kuma.pet/)
   [API](https://github.com/lucasheld/uptime-kuma-api)
 - Provides Graphical [Terminal User Interface](https://textual.textualize.io/)
-- Uses ArtPoll based device network discovery, to create an MVR file with list
-  of devices discovered on the network
+- Uses ArtPoll based device network discovery, to create and/or autoimport an
+  MVR file with list of devices discovered on the network
 - Creates tags from scene Layers and from fixture Classes and Positions
 - Creates monitors, marked with the above mentioned tags, allowing grouping in
   Uptime Kuma
 - Provides an MVR Merging tool, allowing to merge IP address from one MVR file
-  (created by some network scanning tool) with another scene file - typically
-  the main planning file. The fixture matching is based on fixture UUIDs or on
-  DMX Universe + Address
-- Bulk delete of monitors and tags - all, or only those matching from an MVR
-  import
+  (for example created by the Network Discovery) with another scene file -
+  typically the main planning file. The fixture matching is based on fixture
+  UUIDs or on DMX Universe + Address
+- Bulk delete of Uptime Kuma, monitors and tags - all, or only those matching
+  from an MVR import
 
 ## FAQ
 
@@ -56,12 +56,13 @@ Hub](https://gdtf.eu/).
 
 ## Quick Start
 
-- Start the software, configure settings for Uptime Kuma server
+- Start the MVRtoKuma, configure settings for Uptime Kuma server
 - Use the `Get Server Data` to get data from Uptime Kuma
 - Use `MVR Files - Import MVR`to import and MVR with fixtures. Make sure the
-  MVR contains data for IPv4 addresses. An MVR file with IPv4 addresses can be
-  created via the `MVR Files - Network Discovery` if your fixtures are on the
-  network and if they respond to ArtNet discovery via ArtPoll.
+  MVR contains data for IPv4 addresses.
+  - An MVR file with IPv4 addresses can be created via the `MVR Files - Network
+    Discovery` if your fixtures are on the network and if they respond to
+    ArtNet discovery via ArtPoll.
 - Use `Add Monitors` to create monitors in Uptime Kuma
 
 ## Features
@@ -69,6 +70,7 @@ Hub](https://gdtf.eu/).
 - ### Settings
     - Set IP address, username and password for access to Uptime Kuma server
     - Choose to (not) display IDs of objects in MVR/Uptime Kuma
+    - Choose a larger or single line buttons in the MVRtoKuma interface
 - ### MVR Files
     - #### Import MVR
         - Loads fixtures from MVR file
@@ -77,10 +79,12 @@ Hub](https://gdtf.eu/).
     - #### Merge MVR
         - Takes fixtures and IPv4 data from one MVR file
         - Adds the IPv4 data into matching fixtures in another MVR file
-        - Fixture matching is based either on fixtures UUIDs or on DMX Universe + Addresses
+        - Fixture matching is based either on fixtures UUIDs or on DMX Universe
+          and Addresses
     - #### Network Discovery
-        - Use the network discovery to create a list of devices found on the
-          local network
+        - Create a list of devices found on the local network. MVR file with
+          these devices is created
+        - Import the discovered devices directly, or from the created file
     - #### Clean MVR data
         - Cleans the MVR imported data in the currently running program
 - ### Create Monitors
@@ -104,12 +108,12 @@ installation and will also run the application.
 
 - [uv](https://docs.astral.sh/uv/)
 
-## Installation
+## SourceCCode Installation
 
 Clone the [repository](https://github.com/vanous/MVRtoKuma/) or [download
 it](https://github.com/vanous/MVRtoKuma/archive/refs/heads/master.zip) and uzip.
 
-## Run the application
+## Run MVRtoKuma
 
 Inside the downloaded/unzipped repository, run:
 
@@ -119,7 +123,7 @@ uv run run.py
 
 ## Running on Android in Termux
 
-With a small amount of effort, it is possible:
+With a small amount of effort, it is possible to run MVRtoKuma on Android:
 
 - Install Termux
 - Install uv, python, wget:
