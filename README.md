@@ -8,6 +8,8 @@ scene file or as discovered on the local network via ArtNet - ArtPoll.
 
 <img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_title.png">
 
+[![asciicast](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR.svg)](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR)
+
 ## Features
 
 - Uses  [pymvr](https://pypi.org/project/pymvr/) to read fixtures from MVR
