@@ -8,8 +8,6 @@ scene file or as discovered on the local network via ArtNet - ArtPoll.
 
 <img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_title.png">
 
-[![asciicast](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR.svg)](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR)
-
 ## Features
 
 - Uses  [pymvr](https://pypi.org/project/pymvr/) to read fixtures from MVR
@@ -40,6 +38,12 @@ MVR scene file or based on network scan.
 
 This is not a general tool to create MVR files. It also is not a general MVR
 file merger.
+
+### How do i use MVRtoKuma?
+
+Read the [Quick Start](#quick-start), see [Screenshots](#screenshots) and
+[Recording](#recording), for further documentation, check out
+[Features](#features).
 
 ## Instalation
 
@@ -166,6 +170,10 @@ uv run run.py
 <img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_delete.png">
 
 <img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_settings.png">
+
+## Recording
+
+[![asciicast](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR.svg)](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR)
 
 ## Development
 
