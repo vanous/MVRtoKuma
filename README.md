@@ -1,8 +1,10 @@
-# Uptime Kuma MVR
+# MVRtoKuma
 
-A tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/),
+<img src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/MVRtoKuma_icon.png" width="256px">
+
+MVRtoKuma - a tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/),
 from fixtures defined in a [MVR](https://gdtf-share.com/) (My Virtual Rig)
-scene file.
+scene file or as discovered on the local network via ArtNet - ArtPoll.
 
 <img  src="https://raw.githubusercontent.com/vanous/uptime-kuma-mvr/refs/heads/master/images/uk_mvr_00.png">
 
@@ -13,6 +15,8 @@ scene file.
 - Uses [Uptime Kuma](https://uptime.kuma.pet/)
   [API](https://github.com/lucasheld/uptime-kuma-api)
 - Provides Graphical [Terminal User Interface](https://textual.textualize.io/)
+- Uses ArtPoll based device network discovery, to create an MVR file with list
+  of devices discovered on the network
 - Creates tags from scene Layers and from fixture Classes and Positions
 - Creates monitors, marked with the above mentioned tags, allowing grouping in
   Uptime Kuma
@@ -27,26 +31,36 @@ scene file.
 
 ### What is this
 
-A tool to quickly create monitors in Uptime Kuma, based on fixtures defined in MVR scene file.
+A tool to quickly create monitors in Uptime Kuma, based on fixtures defined in
+MVR scene file or based on network scan.
 
 ### What this is not
 
 This is not a tool to create MVR files. It also is not a general MVR file merger.
 
+## Instalation
+
+Binary releases for Linux, macOS and Windows are available from the
+[releases](https://github.com/vanous/uptime-kuma-mvr/releases). For other
+operating systems and for development, use the instructions below.
+
 ### What is MVR?
 
-The My Virtual Rig file format is an open standard which allows programs to
-share data and geometry of a scene for the entertainment industry. A scene is a
-set of parametric objects such as fixtures, trusses, video screens, and other
-objects that are used in the entertainment industry. See documentation and
-further details on [GDTF Hub](https://gdtf.eu/).
+The [My Virtual Rig file format is an open standard](https://gdtf-share.com/)
+which allows programs to share data and geometry of a scene for the
+entertainment industry. A scene is a set of parametric objects such as
+fixtures, trusses, video screens, and other objects that are used in the
+entertainment industry. See documentation and further details on [GDTF
+Hub](https://gdtf.eu/).
 
 ## Quick Start
 
 - Start the software, configure settings for Uptime Kuma server
 - Use the `Get Server Data` to get data from Uptime Kuma
 - Use `MVR Files - Import MVR`to import and MVR with fixtures. Make sure the
-  MVR contains data for IPv4 addresses
+  MVR contains data for IPv4 addresses. An MVR file with IPv4 addresses can be
+  created via the `MVR Files - Network Discovery` if your fixtures are on the
+  network and if they respond to ArtNet discovery via ArtPoll.
 - Use `Add Monitors` to create monitors in Uptime Kuma
 
 ## Features
@@ -54,16 +68,20 @@ further details on [GDTF Hub](https://gdtf.eu/).
 - ### Settings
     - Set IP address, username and password for access to Uptime Kuma server
     - Choose to (not) display IDs of objects in MVR/Uptime Kuma
-- ### Import MVR
-    - Loads fixtures from MVR file
-    - Reads IPv4 addresses of these fixtures
-    - Reads layer, class and position names
-- ### Merge MVR
-    - Takes fixtures and IPv4 data from one MVR file
-    - Adds the IPv4 data into matching fixtures in another MVR file
-    - Fixture matching is based either on fixtures UUIDs or on DMX Universe + Addresses
-- ### Clean MVR data
-    - Cleans the MVR imported data in the currently running program
+- ### MVR Files
+    - #### Import MVR
+        - Loads fixtures from MVR file
+        - Reads IPv4 addresses of these fixtures
+        - Reads layer, class and position names
+    - #### Merge MVR
+        - Takes fixtures and IPv4 data from one MVR file
+        - Adds the IPv4 data into matching fixtures in another MVR file
+        - Fixture matching is based either on fixtures UUIDs or on DMX Universe + Addresses
+    - #### Network Discovery
+        - Use the network discovery to create a list of devices found on the
+          local network
+    - #### Clean MVR data
+        - Cleans the MVR imported data in the currently running program
 - ### Create Monitors
     - Creates monitors in Uptime Kuma
     - Allows to select which MVR features will be used for tags:
@@ -77,13 +95,8 @@ further details on [GDTF Hub](https://gdtf.eu/).
         - Monitors matching those from imported MVR
         - Tags matching those from imported MVR
 
-## Instalation
 
-Binary release is currently available for Linux and Windows, download it from the
-[releases](https://github.com/vanous/uptime-kuma-mvr/releases). For other
-operating systems and for development, use the instructions below.
-
-## Requirements
+## Requirements for usage via source code
 
 Install `uv` on your system. `uv` will manage python and dependencies
 installation and will also run the application.
