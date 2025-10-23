@@ -2,9 +2,10 @@
 
 <img src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/MVRtoKuma_icon.png" width="128px">
 
-MVRtoKuma - a tool to quickly create monitors in [Uptime Kuma](https://uptime.kuma.pet/),
-from fixtures defined in a [MVR](https://gdtf-share.com/) (My Virtual Rig)
-scene file or as discovered on the local network via ArtNet - ArtPoll.
+[MVRtoKuma](https://github.com/vanous/MVRtoKuma) - a tool to quickly create
+monitors in [Uptime Kuma](https://uptime.kuma.pet/) from fixtures defined in an
+[MVR](https://gdtf-share.com/) (My Virtual Rig) scene file or as discovered on
+the local network via ArtNet - ArtPoll.
 
 <img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_title.png">
 
@@ -57,15 +58,16 @@ The [My Virtual Rig file format is an open standard](https://gdtf-share.com/)
 which allows programs to share data and geometry of a scene for the
 entertainment industry. A scene is a set of parametric objects such as
 fixtures, trusses, video screens, and other objects that are used in the
-entertainment industry. See documentation and further details on [GDTF
+entertainment industry. See [documentation and further
+details](https://www.gdtf.eu/mvr/prologue/introduction/) on [GDTF
 Hub](https://gdtf.eu/).
 
 ## Quick Start
 
 - Start the MVRtoKuma, configure settings for Uptime Kuma server
 - Use the `Get Server Data` to get data from Uptime Kuma
-- Use `MVR Files - Import MVR`to import and MVR with fixtures. Make sure the
-  MVR contains data for IPv4 addresses.
+- Use `MVR Files - Import MVR`to import an MVR file with fixtures. Make sure
+  the MVR contains data with IPv4 addresses.
   - An MVR file with IPv4 addresses can be created via the `MVR Files - Network
     Discovery` if your fixtures are on the network and if they respond to
     ArtNet discovery via ArtPoll.
@@ -114,7 +116,7 @@ installation and will also run the application.
 
 - [uv](https://docs.astral.sh/uv/)
 
-## SourceCCode Installation
+## Source Code Installation
 
 Clone the [repository](https://github.com/vanous/MVRtoKuma/) or [download
 it](https://github.com/vanous/MVRtoKuma/archive/refs/heads/master.zip) and uzip.
