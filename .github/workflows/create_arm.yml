@@ -19,7 +19,7 @@ jobs:
       - name: Build with ARM64 Docker
         uses: addnab/docker-run-action@v3
         with:
-          image: arm64v8/python:3.12
+          image: arm64v8/python:3
           options: "--rm"
           run: |
             python -m pip install --upgrade pip
