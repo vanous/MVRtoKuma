@@ -1,0 +1,37 @@
+name: Build Python App for ARM64 Termux
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Set up QEMU for ARM64 emulation
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      # Use an ARM64 Python Docker image
+      - name: Build with ARM64 Docker
+        uses: addnab/docker-run-action@v3
+        with:
+          image: arm64v8/python:3.12
+          options: "--rm"
+          run: |
+            python -m pip install --upgrade pip
+            pip install pyinstaller
+            # Optionally install other dependencies
+            pip install -r requirements.txt
+            # Build the binary
+            pyinstaller packaging.spec
+            ls -la ./dist
+
+      #- name: Upload artifact (for debugging or download)
+      #  uses: actions/upload-artifact@v4
+      #  with:
+      #    name: ${{ runner.os }}-binary
+      #    path: dist/*
