@@ -11,6 +11,7 @@ from tui.network import get_network_cards
 from tui.artnet import ArtNetDiscovery
 from tui.create_mvr import create_mvr
 import re
+import sys
 
 
 class QuitScreen(ModalScreen[bool]):
@@ -455,8 +456,12 @@ class ArtNetScreen(ModalScreen):
     def on_mount(self):
         select_widget = self.query_one("#networks_select", Select)
         self.networks = get_network_cards()
+        if sys.platform.startswith("win"):
+            self.networks.pop(0)  # the 0.0.0.0 does not really work on Win
+
         select_widget.set_options(self.networks)
-        select_widget.value = "0.0.0.0"
+        if any(ip == "0.0.0.0" for name, ip in self.networks):
+            select_widget.value = "0.0.0.0"  # for Win
         select_widget.refresh()  # Force redraw
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -519,7 +524,7 @@ class ArtNetScreen(ModalScreen):
                     )
                 )
             result = "\n".join(
-                f"{item.short_name} {item.ip_address} {item.universe} {item.address}"
+                f"{item.short_name} {item.ip_address} {item.universe or ''} {item.address or ''}"
                 for item in devices
             )
 
