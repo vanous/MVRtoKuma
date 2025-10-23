@@ -9,7 +9,7 @@ jobs:
   build-arm64:
     runs-on: ubuntu-latest
     env:
-      TARGET_ARCH: arm64
+      TARGET_ARCH: aarch64
     steps:
       - uses: actions/checkout@v3
 
