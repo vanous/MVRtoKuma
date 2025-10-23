@@ -9,7 +9,7 @@ from PyInstaller.building.build_main import EXE
 
 icon_file = "images/MVRtoKuma_icon.ico"
 
-arch = platform.machine()  # e.g., 'x86_64', 'aarch64'
+arch = os.environ.get("TARGET_ARCH", platform.machine())
 print("platform", arch)
 
 if sys.platform.startswith('win'):

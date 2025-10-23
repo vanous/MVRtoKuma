@@ -8,6 +8,8 @@ on:
 jobs:
   build-arm64:
     runs-on: ubuntu-latest
+    env:
+      TARGET_ARCH: arm64
     steps:
       - uses: actions/checkout@v3
 
