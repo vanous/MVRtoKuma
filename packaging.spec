@@ -3,15 +3,21 @@
 # magick convert MVRtoKuma_icon.png -define icon:auto-resize=512,256,128,64,48,32,16 MVRtoKuma.ico
 
 import sys
+import platform
 from PyInstaller.building.build_main import EXE
 # (other imports like Analysis, PYZ, etc.)
 
 icon_file = "images/MVRtoKuma_icon.ico"
 
+arch = platform.machine()  # e.g., 'x86_64', 'aarch64'
+
 if sys.platform.startswith('win'):
     exe_name = 'MVRtoKuma_windows'
 elif sys.platform.startswith('linux'):
-    exe_name = 'MVRtoKuma_linux'
+    if arch == 'aarch64':
+        exe_name = 'MVRtoKuma_linux_arm64'
+    else:
+        exe_name = 'MVRtoKuma_linux'
     icon_file = "images/MVRtoKuma_icon.png"
 else:
     exe_name = 'MVRtoKuma_macos'
