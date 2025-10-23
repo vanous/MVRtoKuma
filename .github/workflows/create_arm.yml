@@ -24,14 +24,14 @@ jobs:
       # Run ARM64 Python container using Buildx emulation
       - name: Build with ARM64 Docker
         run: |
-          docker run --rm -v $GITHUB_WORKSPACE:/src -w /src termux/termux:latest bash -c "\
+          docker run --rm -v ${{ github.workspace }}:/src -w /src ghcr.io/termux/package-builder bash -c "\
             pkg update -y && \
-            pkg install -y python clang git && \
+            pkg install -y python clang make git && \
+            pip install --upgrade pip && \
             pip install pyinstaller && \
             pip install -r requirements.txt && \
             pyinstaller packaging.spec && \
-            ls -la ./dist \
-          "
+            ls -la ./dist"
 
       - name: Upload artifact (for debugging or download)
         uses: actions/upload-artifact@v4
