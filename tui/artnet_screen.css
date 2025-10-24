@@ -12,13 +12,24 @@ ArtNetScreen #network {
     width: 100%;
     background: $panel;
 }
-ArtNetScreen Button {
-    height: 1;
+ArtNetScreen .small_button {
     width: 1fr;
-    margin: 1;
-    padding: 1;
+    height: 1;
+    margin-left: 1;
+    margin-right: 1;
+    margin-top:0;
+    margin-bottom: 0;
+    padding: 0;
     border: none;
-    background: red;
+    background: blue;
+}
+
+ArtNetScreen .big_button {
+    height: 3;
+    width: 1fr;
+    margin-right: 1;
+    margin-left: 1;
+    background: blue;
 }
 ArtNetScreen #results{
     height: 100%;
@@ -29,4 +40,5 @@ ArtNetScreen #results{
 
 ArtNetScreen #row2 {
     margin-bottom:1;
+    height: auto;
 }

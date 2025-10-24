@@ -24,14 +24,10 @@ DictListDisplay {
     border: none;
 }
 
-#action_buttons {
-    margin-left:1;
-    height: auto;
-}
 
-.small_button {
+MVRtoKuma .small_button {
     height: 1;
-    margin-left: 0;
+    margin-left: 1;
     margin-right: 1;
     margin-top:0;
     margin-bottom: 0;
@@ -40,9 +36,14 @@ DictListDisplay {
     background: blue;
 }
 
-.big_button {
+MVRtoKuma .big_button {
     height: 3;
+    margin-left: 1;
+    margin-right: 1;
+    margin-top:0;
+    margin-bottom: 0;
     background: blue;
+    border: blue
 }
 
 #frame {

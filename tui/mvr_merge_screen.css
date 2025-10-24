@@ -18,9 +18,9 @@ MVRMergeScreen #question {
     content-align: center middle;
 }
 
-#row1 Button,
-#row2 Button,
-#row4 Button {
+MVRMergeScreen #row1 Button,
+MVRMergeScreen #row2 Button,
+MVRMergeScreen #row4 Button {
     width: 1fr; /* This makes each button take equal fraction of the container */
     height: 1;
     margin: 0 1;
