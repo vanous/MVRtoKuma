@@ -11,18 +11,18 @@ the local network via ArtNet - ArtPoll.
 
 ## Features
 
-- Uses  [pymvr](https://pypi.org/project/pymvr/) to read fixtures from MVR
-  files
+- Uses  [pymvr](https://pypi.org/project/pymvr/) to read/write fixtures from/to
+  MVR files
 - Uses [Uptime Kuma](https://uptime.kuma.pet/)
-  [API](https://github.com/lucasheld/uptime-kuma-api)
+  [API](https://github.com/lucasheld/uptime-kuma-api) for programmatic access
 - Provides Graphical [Terminal User Interface](https://textual.textualize.io/)
-- Uses ArtPoll based device network discovery, to create and/or autoimport an
+- Uses ArtPoll based device network discovery to create and/or auto-import an
   MVR file with list of devices discovered on the network
-- Creates tags from scene Layers and from fixture Classes and Positions
-- Creates monitors, marked with the above mentioned tags, allowing grouping in
-  Uptime Kuma
-- Provides an MVR Merging tool, allowing to merge IP address from one MVR file
-  (for example created by the Network Discovery) with another scene file -
+- Creates Kuma tags from scene Layers and from fixture Classes and Positions
+- Creates Kuma monitors, marked with the above mentioned tags, allowing
+  grouping in Uptime Kuma
+- Provides an MVR Merging tool, allowing to merge IP addresses from one MVR
+  file (for example created by the Network Discovery) with another scene file -
   typically the main planning file. The fixture matching is based on fixture
   UUIDs or on DMX Universe + Address
 - Bulk delete of Uptime Kuma, monitors and tags - all, or only those matching
@@ -64,7 +64,7 @@ Hub](https://gdtf.eu/).
 
 ## Quick Start
 
-- Start the MVRtoKuma, configure settings for Uptime Kuma server
+- Start the MVRtoKuma, configure settings for your Uptime Kuma server
 - Use the `Get Server Data` to get data from Uptime Kuma
 - Use `MVR Files - Import MVR`to import an MVR file with fixtures. Make sure
   the MVR contains data with IPv4 addresses.
