@@ -30,10 +30,22 @@ class QuitScreen(ModalScreen[bool]):
             Horizontal(
                 Button("Yes", variant="error", id="yes"),
                 Button("No", variant="primary", id="no"),
-                id="buttons",
+                id="quit_buttons",
             ),
             id="dialog",
         )
+
+    def on_mount(self):
+        if self.app.singleline_ui_toggle:
+            for button in self.query("Button"):
+                button.remove_class("big_button")
+                button.add_class("small_button")
+                button.refresh(layout=True)  # Force refresh if needed
+        else:
+            for button in self.query("Button"):
+                button.remove_class("small_button")
+                button.add_class("big_button")
+                button.refresh(layout=True)  # Force refresh if needed
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "yes":
@@ -92,8 +104,8 @@ class ConfigScreen(ModalScreen[dict]):
                 with Horizontal(id="details_checkbox_container"):
                     yield Checkbox(id="singleline_ui_toggle")
             yield Horizontal(
-                Button("Save", variant="success", id="save"),
-                Button("Cancel", variant="error", id="cancel"),
+                Button("Save", variant="success", id="save", classes="small_button"),
+                Button("Cancel", variant="error", id="cancel", classes="small_button"),
                 id="config_buttons",
             )
 
@@ -110,6 +122,17 @@ class ConfigScreen(ModalScreen[dict]):
             self.query_one("#singleline_ui_toggle", Checkbox).value = self.data.get(
                 "singleline_ui_toggle", True
             )
+
+        if self.app.singleline_ui_toggle:
+            for button in self.query("Button"):
+                button.remove_class("big_button")
+                button.add_class("small_button")
+                button.refresh(layout=True)  # Force refresh if needed
+        else:
+            for button in self.query("Button"):
+                button.remove_class("small_button")
+                button.add_class("big_button")
+                button.refresh(layout=True)  # Force refresh if needed
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":
@@ -446,9 +469,14 @@ class ArtNetScreen(ModalScreen):
         with Vertical(id="all_around"):
             yield Static("Art-Net Discovery", id="question")
             with Horizontal(id="row2"):
-                yield Button("Discover", id="do_start")
-                yield Button("Import Discovered", id="import_to_kuma", disabled=True)
-                yield Button("Cancel", id="cancel")
+                yield Button("Discover", id="do_start", classes="small_button")
+                yield Button(
+                    "Import Discovered",
+                    id="import_to_kuma",
+                    disabled=True,
+                    classes="small_button",
+                )
+                yield Button("Cancel", id="cancel", classes="small_button")
             yield Select([], id="networks_select")
             yield Static("", id="network")
             yield Static("", id="results")
@@ -463,6 +491,17 @@ class ArtNetScreen(ModalScreen):
         if any(ip == "0.0.0.0" for name, ip in self.networks):
             select_widget.value = "0.0.0.0"  # for Win
         select_widget.refresh()  # Force redraw
+
+        if self.app.singleline_ui_toggle:
+            for button in self.query("Button"):
+                button.remove_class("big_button")
+                button.add_class("small_button")
+                button.refresh(layout=True)  # Force refresh if needed
+        else:
+            for button in self.query("Button"):
+                button.remove_class("small_button")
+                button.add_class("big_button")
+                button.refresh(layout=True)  # Force refresh if needed
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "do_start":

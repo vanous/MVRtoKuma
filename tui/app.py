@@ -183,15 +183,15 @@ class MVRtoKuma(App):
                     self.details_toggle = data.get("details_toggle", False)
                     self.singleline_ui_toggle = data.get("singleline_ui_toggle", True)
 
-                    if not data.get("singleline_ui_toggle", False):
-                        for button in self.query("Button"):
-                            button.remove_class("small_button")
-                            button.add_class("big_button")
-                            button.refresh(layout=True)  # Force refresh if needed
-                    else:
+                    if self.singleline_ui_toggle:
                         for button in self.query("Button"):
                             button.remove_class("big_button")
                             button.add_class("small_button")
+                            button.refresh(layout=True)  # Force refresh if needed
+                    else:
+                        for button in self.query("Button"):
+                            button.remove_class("small_button")
+                            button.add_class("big_button")
                             button.refresh(layout=True)  # Force refresh if needed
                     self.query_one("#json_output").update(
                         f"{f'Configuration loaded, Server: [blue]{self.url}[/blue]' if self.url else 'Ready... make sure to Configure Uptime Kuma address and credentials'}"
