@@ -13,7 +13,7 @@ the local network via ArtNet - ArtPoll.
 
 - Uses  [pymvr](https://pypi.org/project/pymvr/) to read/write fixtures from/to
   MVR files
-- Uses [Uptime Kuma](https://uptime.kuma.pet/)
+- Uses [Uptime Kuma](https://uptime.kuma.pet/) (version 1 is supported)
   [API](https://github.com/lucasheld/uptime-kuma-api) for programmatic access
 - Provides Graphical [Terminal User Interface](https://textual.textualize.io/)
 - Uses ArtPoll based device network discovery to create and/or auto-import an
