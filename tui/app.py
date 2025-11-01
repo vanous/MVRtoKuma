@@ -169,7 +169,12 @@ class MVRtoKuma(App):
                         yield self.kuma_fixtures_display
 
             with Grid(id="action_buttons"):
-                yield Button("Get Server Data", id="get_button", classes="small_button")
+                yield Button(
+                    "Get Server Data",
+                    id="get_button",
+                    classes="small_button",
+                    disabled=True,
+                )
                 yield Button(
                     "Add Monitors",
                     id="open_create_monitors",
@@ -212,6 +217,7 @@ class MVRtoKuma(App):
                     self.query_one("#json_output").update(
                         f"{f'Configuration loaded, Server: [blue]{self.url}[/blue]' if self.url else 'Ready... make sure to Configure Uptime Kuma address and credentials'}"
                     )
+                    self.enable_buttons()
 
                 except json.JSONDecodeError:
                     # Handle empty or invalid JSON file
@@ -306,6 +312,8 @@ class MVRtoKuma(App):
                             button.add_class("small_button")
                             button.refresh(layout=True)  # Force refresh if needed
 
+                    self.enable_buttons()
+
             self.push_screen(ConfigScreen(data=current_config), save_config)
 
         if event.button.id == "quit":
@@ -336,6 +344,7 @@ class MVRtoKuma(App):
         #    print(fixture)
 
         self.kuma_fixtures_display.update_items(self.kuma_fixtures)
+        self.enable_buttons()
 
     def on_tags_fetched(self, message: MonitorsFetched) -> None:
         # output_widget = self.query_one("#json_output", Static)
@@ -343,11 +352,8 @@ class MVRtoKuma(App):
 
         # formatted = json.dumps(message.tags, indent=2)
         # output_widget.update(f"[green]Tags Fetched:[/green]\n{formatted}")
-        self.kuma_tags = [KumaTag(t) for t in message.tags]
-        # for tag in self.kuma_tags:
-        #    print(tag)
-
         self.kuma_tag_display.update_items(self.kuma_tags)
+        self.enable_buttons()
 
     def on_mvr_parsed(self, message: MvrParsed) -> None:
         # output_widget = self.query_one("#json_output", Static)
@@ -686,10 +692,15 @@ class MVRtoKuma(App):
         self.query_one("#delete_screen").disabled = True
 
     def enable_buttons(self):
-        self.query_one("#get_button").disabled = False
-        if self.mvr_fixtures:
-            self.query_one("#open_create_monitors").disabled = False
-        self.query_one("#delete_screen").disabled = False
+        if self.username and self.password:
+            self.query_one("#get_button").disabled = False
+            if self.mvr_fixtures:
+                self.query_one("#open_create_monitors").disabled = False
+            self.query_one("#delete_screen").disabled = False
+        else:
+            self.query_one("#get_button").disabled = True
+            self.query_one("#open_create_monitors").disabled = True
+            self.query_one("#delete_screen").disabled = True
 
 
 if __name__ == "__main__":
