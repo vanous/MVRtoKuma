@@ -148,7 +148,6 @@ class MVRtoKuma(App):
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()
-        yield Footer()
         with Vertical(id="all_around"):
             with Vertical(id="json_output_container"):
                 yield Static(

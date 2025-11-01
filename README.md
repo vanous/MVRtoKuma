@@ -9,7 +9,7 @@ the local network via ArtNet - ArtPoll.
 
 <img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_title.png">
 
-## Features
+## Overview
 
 - Uses  [pymvr](https://pypi.org/project/pymvr/) to read/write fixtures from/to
   MVR files
@@ -108,6 +108,25 @@ Hub](https://gdtf.eu/).
         - Monitors matching those from imported MVR
         - Tags matching those from imported MVR
 
+## Screenshots
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_main.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_selection.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_discovery.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_merge.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_add_monitors.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_delete.png">
+
+<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_settings.png">
+
+## Recording
+
+[![asciicast](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR.svg)](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR)
 
 ## Requirements for usage via source code
 
@@ -145,7 +164,7 @@ pkg install uv python3 wget
 ```sh
 wget https://github.com/vanous/MVRtoKuma/archive/refs/heads/master.zip
 unzip master.zip
-cd uptime-kume-mvr-master
+cd MVRtoKuma-master/
 ```
 
 - You will need to edit the pyproject.toml and change python to 3.11, then you
@@ -157,25 +176,6 @@ uv run run.py
 
 <img src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/ui_mvr_android.jpg" height=400px>
 
-## Screenshots
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_main.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_selection.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_discovery.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_merge.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_add_monitors.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_delete.png">
-
-<img  src="https://raw.githubusercontent.com/vanous/MVRtoKuma/refs/heads/master/images/uk_mvr_settings.png">
-
-## Recording
-
-[![asciicast](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR.svg)](https://asciinema.org/a/2I2hfrJ95sQJa4kx0cFWgVWnR)
 
 ## Development
 
@@ -240,7 +240,7 @@ uv run pyinstaller packaging.spec
   title        = {pyMVR: Python Library for My Virtual Rig},
   author       = {{OpenStage}},
   year         = {2025},
-  version      = {1.0.3},
+  version      = {1.0.4},
   url          = {https://github.com/open-stage/python-mvr}
 }
 ```

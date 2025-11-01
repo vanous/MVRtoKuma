@@ -51,6 +51,7 @@ MVRtoKuma .small_button {
     margin-top:0;
     margin-bottom: 0;
     padding: 0;
+    min-width: 22;
     border: none;
     background: blue;
 }
@@ -58,6 +59,7 @@ MVRtoKuma .small_button {
 MVRtoKuma .big_button {
     height: 3;
     margin-left: 1;
+    min-width: 22;
     margin-right: 1;
     margin-top:0;
     margin-bottom: 0;
