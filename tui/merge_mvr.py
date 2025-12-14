@@ -100,8 +100,8 @@ def merger(in_path, out_path):
                 done_already.append(out_fixture.uuid)
 
     mvr_writer = pymvr.GeneralSceneDescriptionWriter()
-    out_scene.scene.to_xml(parent=mvr_writer.xml_root)
-    out_scene.user_data.to_xml(parent=mvr_writer.xml_root)
+    mvr_writer.serialize_scene(out_scene.scene)
+    mvr_writer.serialize_user_data(out_scene.user_data)
     output_path = Path("merged_with_network.mvr")
     mvr_writer.write_mvr(output_path)
 
